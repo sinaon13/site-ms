@@ -1,5 +1,4 @@
 def func(n,count,su,m,cou):
-    sian
     if su==len(n):
         count.append(cou)
     if m==0:
