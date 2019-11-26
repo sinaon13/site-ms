@@ -1,4 +1,5 @@
 import sys
+
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip, 
     QPushButton,QMessageBox , QApplication, QDesktopWidget, QLabel)
 from PyQt5.QtGui import QIcon
@@ -22,7 +23,7 @@ class Example(QWidget):
         self.resize(440,250)
         self.center()
         self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('web.png'))        
+        self.setWindowIcon(QIcon('webb.png'))        
         
         start=QPushButton('START',self)
         start.setToolTip('press it to make sites!')
