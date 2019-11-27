@@ -94,17 +94,21 @@ class page(QMainWindow):
         QToolTip.setFont(QFont('SansSerif', 10))
         exitAct = QAction(QIcon('web.png'), 'text', self)
         exitAct.setStatusTip('Text Box')
+        save = QAction(QIcon('save.png'), 'save', self)
+        img  = QAction(QIcon('img.png'), 'image', self)
         exitAct.triggered.connect(self.close)
 
         self.statusBar()
 
 
 
-        toolbar = self.addToolBar('text')
+        toolbar = self.addToolBar('text', size = (100, 200))
         toolbar.addAction(exitAct)
+        toolbar.addAction(img)
+        toolbar.addAction(save)
         
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle('Site Maker')    
+        self.setWindowTitle('Site Maker') 
         self.show()
         
         
