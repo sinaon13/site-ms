@@ -92,9 +92,9 @@ class page(QMainWindow):
         textEdit = QTextEdit()
         self.setCentralWidget(textEdit)
         QToolTip.setFont(QFont('SansSerif', 10))
-        text_box = QAction(QIcon('web.png'), 'text', self)
-        text_box.setStatusTip('Text Box')
-        text_box.triggered.connect(self.close)
+        exitAct = QAction(QIcon('web.png'), 'text', self)
+        exitAct.setStatusTip('Text Box')
+        exitAct.triggered.connect(self.close)
 
         self.statusBar()
 
