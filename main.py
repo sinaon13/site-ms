@@ -91,31 +91,23 @@ class page(QMainWindow):
         
         textEdit = QTextEdit()
         self.setCentralWidget(textEdit)
-
-        exitAct = QAction(QIcon('exit24.png'), 'Exit', self)
-        exitAct.setShortcut('Ctrl+Q')
-        exitAct.setStatusTip('Exit application')
-        exitAct.triggered.connect(self.close)
+        QToolTip.setFont(QFont('SansSerif', 10))
+        text_box = QAction(QIcon('web.png'), 'text', self)
+        text_box.setStatusTip('Text Box')
+        text_box.triggered.connect(self.close)
 
         self.statusBar()
 
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(exitAct)
 
-        toolbar = self.addToolBar('Exit')
+
+        toolbar = self.addToolBar('text')
         toolbar.addAction(exitAct)
         
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle('Main window')    
+        self.setWindowTitle('Site Maker')    
         self.show()
         
         
-if __name__ == '__main__':
-    
-    app = QApplication(sys.argv)
-    ex = Example()
-    sys.exit(app.exec_())
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
