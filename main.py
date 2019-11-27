@@ -89,8 +89,7 @@ class page(QMainWindow):
         
         
     def initUI(self):               
-        menubar = self.menuBar()
-        editmenu = menubar.addMenu('edit')
+        
         textEdit = QTextEdit()
         self.setCentralWidget(textEdit)
         QToolTip.setFont(QFont('SansSerif', 10))
@@ -98,15 +97,18 @@ class page(QMainWindow):
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
         hasan= QAction(QIcon('img.png'), 'image', self)
+        hasan.setStatusTip('add image')
+        gg = QAction(QIcon('exit24.png'), 'undo', self)
+
         self.statusBar()
         
 
-
+        menubar = self.menuBar()
+        editmenu = menubar.addMenu('edit')
+        editmenu.addAction(gg)
         toolbar = self.addToolBar('site')
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
-##        tool = self.addToolBar('img')
-##        tool = self.addToolBar(hasan)
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')    
         self.show()
