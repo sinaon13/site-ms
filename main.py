@@ -80,7 +80,8 @@ class khar(QWidget):
         self.setWindowIcon(QIcon('webb.png'))
 
 class page(QMainWindow):
-    
+    def red():
+        print('sina')
     def __init__(self):
         super().__init__()
         
@@ -88,21 +89,24 @@ class page(QMainWindow):
         
         
     def initUI(self):               
-        
+        menubar = self.menuBar()
+        editmenu = menubar.addMenu('edit')
         textEdit = QTextEdit()
         self.setCentralWidget(textEdit)
         QToolTip.setFont(QFont('SansSerif', 10))
-        exitAct = QAction(QIcon('web.png'), 'text', self)
-        exitAct.setStatusTip('Text Box')
-        exitAct.triggered.connect(self.close)
-
+        sina = QAction(QIcon('web.png'), 'text', self)
+        sina.setStatusTip('Text Box')
+        sina.triggered.connect(self.red)
+        hasan= QAction(QIcon('img.png'), 'image', self)
         self.statusBar()
-
-
-
-        toolbar = self.addToolBar('text')
-        toolbar.addAction(exitAct)
         
+
+
+        toolbar = self.addToolBar('site')
+        toolbar.addAction(sina)
+        toolbar.addAction(hasan)
+##        tool = self.addToolBar('img')
+##        tool = self.addToolBar(hasan)
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')    
         self.show()
