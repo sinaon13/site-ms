@@ -80,7 +80,8 @@ class khar(QWidget):
         self.setWindowIcon(QIcon('webb.png'))
 
 class page(QMainWindow):
-    
+    def red():
+        print('sina')
     def __init__(self):
         super().__init__()
         
@@ -88,25 +89,42 @@ class page(QMainWindow):
         
         
     def initUI(self):               
-        
+        menubar = self.menuBar()
+        editmenu = menubar.addMenu('edit')
         textEdit = QTextEdit()
         self.setCentralWidget(textEdit)
         QToolTip.setFont(QFont('SansSerif', 10))
+<<<<<<< HEAD
         exitAct = QAction(QIcon('web.png'), 'text', self)
         exitAct.setStatusTip('Text Box')
         save = QAction(QIcon('save.png'), 'save', self)
         img  = QAction(QIcon('img.png'), 'image', self)
         exitAct.triggered.connect(self.close)
 
+=======
+        sina = QAction(QIcon('web.png'), 'text', self)
+        sina.setStatusTip('Text Box')
+        sina.triggered.connect(self.red)
+        hasan= QAction(QIcon('img.png'), 'image', self)
+>>>>>>> 2434886a030fecf3c341a5d70e470409c5d8326d
         self.statusBar()
+        
 
 
+<<<<<<< HEAD
 
         toolbar = self.addToolBar('text', size = (100, 200))
         toolbar.addAction(exitAct)
         toolbar.addAction(img)
         toolbar.addAction(save)
         
+=======
+        toolbar = self.addToolBar('site')
+        toolbar.addAction(sina)
+        toolbar.addAction(hasan)
+##        tool = self.addToolBar('img')
+##        tool = self.addToolBar(hasan)
+>>>>>>> 2434886a030fecf3c341a5d70e470409c5d8326d
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker') 
         self.show()
