@@ -4,8 +4,6 @@ from PyQt5.QtWidgets import (QWidget, QToolTip,
     QPushButton, QApplication)
 from PyQt5.QtGui import QFont    
 vec=pg.math.Vector2
-def sina():
-    print("sina divoone")
 class Example(QWidget):
     
     def __init__(self):
@@ -24,8 +22,7 @@ class Example(QWidget):
             btn.setToolTip('This is a <b>QPushButton</b> widget')
             btn.resize(btn.sizeHint())
             btn.move(450, 50 * i)
-            btn.clicked.connect(sina)
-        
+            
         self.setGeometry(300, 300, 500, 400)
         self.setWindowTitle('Tooltips')    
         self.show()
