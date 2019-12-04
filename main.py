@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip, 
-    QPushButton,QMessageBox , QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
+    QPushButton,QMessageBox ,QLineEdit, QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
 from PyQt5.QtGui import QIcon,QFont
 class Example(QWidget):
     
@@ -9,24 +9,24 @@ class Example(QWidget):
         super().__init__()
         
         self.initUI()
+
         self. sina = khar()
-        
     def initUI(self):
         
-        lbl1 = QLabel('Welcome to << Site Builder >>!!!', self)
-        lbl1.move(512 - 70, 50)
+        lbl1 = QLabel('Site Maker', self)
+        lbl1.move(200, 50)
         
-        QToolTip.setFont(QFont('SansSerif', 10))
+        QToolTip.setFont(QFont('SansSerif', 50))
 
-        self.resize(1024, 768)
+        self.resize(440,250)
         self.center()
-        self.setWindowTitle('Site Builder')
+        self.setWindowTitle('Site Maker')
         self.setWindowIcon(QIcon('webb.png'))        
 
         start=QPushButton('START',self)
         start.setToolTip('press it to make sites!')
         start.resize(start.sizeHint())
-        start.move(512 - 30,384 - 10)
+        start.move(190,160)
         start.clicked.connect(self.s)
         
         self.show() 
@@ -50,7 +50,8 @@ class Example(QWidget):
 
     def s(self):
         self.page = page()
-        
+
+
 class khar(QMainWindow):
     
     def __init__(self):
@@ -71,52 +72,79 @@ class khar(QWidget):
     
     def __init__(self):
         super().__init__()
-        
+        self.t=0
         self.initUI()
-        
-        
     def initUI(self):               
-        self.setWindowTitle('Site Builder')
+        self.setWindowTitle('Site Maker')
         self.setWindowIcon(QIcon('webb.png'))
+class page(QMainWindow,QWidget):
 
-class page(QMainWindow):
     def red(self):
-        print('sina')
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+##        print(self.textedit.text())
+    def blue(self):
+        self.label = QLabel(self)
+        self.pixmap = QPixmap('image.png')
+        self.label.setPixmap(self.pixmap)
+    def done(self):
+        
+        doc = self.textedit.document()
+        block = doc.begin()
+        lines = [ block.text() ]
+        for i in range( 1, doc.blockCount() ):
+            block = block.next()
+            lines.append( block.text() )
+        self.w=open('e.txt','w')
+        p=''
+        for i in range(len(lines)):
+            if lines[i]=='':
+                p+='\n'
+            elif lines[i]!='' and i!= len(lines)-1:
+                p+=lines[i]+'\n'
+            else:
+                p+=lines[i]
+        self.w.write(p)
+        self.w.close()
+        print(p)
+        
     def __init__(self):
-        super().__init__()
+        super().__init__(                                                                                                          )
         
         self.initUI()
         
-        
     def initUI(self):               
-        menubar = self.menuBar()
-        editmenu = menubar.addMenu('edit')
-        textEdit = QTextEdit()
-        self.setCentralWidget(textEdit)
+        
+        
         QToolTip.setFont(QFont('SansSerif', 10))
-        save = QAction(QIcon('save.png'), 'save', self)
-        save.setStatusTip("Save Edition")
-        remove = QAction(QIcon('remove.png'), 'remove', self)
-        remove.setStatusTip("Remove")
+##        self.textbox = QLineEdit(self)
+##        self.textbox.move(20, 20)
+##        self.textbox.resize(280,40)
         sina = QAction(QIcon('web.png'), 'text', self)
+        sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
-        sina.setStatusTip("add Textbox")
         hasan= QAction(QIcon('img.png'), 'image', self)
-        hasan.setStatusTip("add Image")
+        hasan.setStatusTip('Add Image')
+        hasan.triggered.connect(self.blue)
+        save = QAction(QIcon('save.png'),'save', self)
+        save.setStatusTip('Save text')
+        save.triggered.connect(self.done)
+        gg = QAction(QIcon('exit24.png'), 'undo', self)
+
         self.statusBar()
         
 
-
-        toolbar = self.addToolBar('Text')
+        menubar = self.menuBar()
+        editmenu = menubar.addMenu('edit')
+        editmenu.addAction(gg)
+        toolbar = self.addToolBar('site')
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
-        toolbar.addAction(remove)
         toolbar.addAction(save)
-##        tool = self.addToolBar('img')
-##        tool = self.addToolBar(hasan)
-        self.setGeometry(0, 0, 1024, 768)
-        self.setWindowTitle('Site Builder') 
+        self.setGeometry(300, 300, 350, 250)
+        self.setWindowTitle('Site Maker')    
         self.show()
+        
         
         
 if __name__ == '__main__':
