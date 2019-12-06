@@ -121,7 +121,7 @@ class page(QMainWindow):
     def getImage(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Image Files (*.png, *.jpg, *.gif)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"Open", "","All Files (*);;Image Files (*.png, *.jpg, *.gif)", options=options)
         self.im = QPixmap(fileName)
         self.label = QLabel()
         self.label.setPixmap(self.im)
