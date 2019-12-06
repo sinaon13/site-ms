@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip, 
-    QPushButton,QMessageBox , QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
-from PyQt5.QtGui import QIcon,QFont
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon,QFont,QPixmap
+from PyQt5.QtCore import *
 class Example(QWidget):
     
     def __init__(self):
@@ -122,9 +122,10 @@ class page(QMainWindow):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Image Files (*.png, *.jpg, *.gif)", options=options)
-        self.im = QPixmap(filename)
+        self.im = QPixmap(fileName)
         self.label = QLabel()
         self.label.setPixmap(self.im)
+        self.setCentralWidget(self.label)
         
 if __name__ == '__main__':
     
