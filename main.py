@@ -1,4 +1,5 @@
 import sys
+import os
 
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip, 
     QPushButton,QMessageBox ,QLineEdit, QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
@@ -72,7 +73,6 @@ class khar(QWidget):
     
     def __init__(self):
         super().__init__()
-        self.t=0
         self.initUI()
     def initUI(self):               
         self.setWindowTitle('Site Maker')
@@ -82,22 +82,43 @@ class page(QMainWindow,QWidget):
     def red(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
-##        print(self.textedit.text())
+        self.d='t'
     def blue(self):
-        self.label = QLabel(self)
-        self.pixmap = QPixmap('image.png')
-        self.label.setPixmap(self.pixmap)
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d='i'
+    def delete(self):
+        doc = self.textedit.document()
+        block = doc.begin()
+        lines = [ block.text() ]
+        if lines!=['']:
+            for i in range( 1, doc.blockCount() ):
+                block = block.next()
+                lines.append( block.text() )
+            os.remove(lines[0])
     def done(self):
-        
+        self.rr=(open('t.txt','r')).readlines()
+        self.e=int(self.rr[0])
+        self.e+=1
+        self.wr=open('t.txt','w')
+        self.wr.write(str(self.e))
+        print(self.e)
+        self.wr.close()
         doc = self.textedit.document()
         block = doc.begin()
         lines = [ block.text() ]
         for i in range( 1, doc.blockCount() ):
             block = block.next()
             lines.append( block.text() )
-        self.w=open('e.txt','w')
-        p=''
-        for i in range(len(lines)):
+        cors=lines[-1].split()
+        self.cords=[int(cors[0]),int(cors[1])]
+        print(self.cords)
+        self.w=open(lines[0]+'.txt','w')
+        if self.d=='i':
+            p=lines[0]+'.img'+'\n'
+        elif self.d=='t':
+            p=lines[0]+'.txt'+'\n'
+        for i in range(1,len(lines)):
             if lines[i]=='':
                 p+='\n'
             elif lines[i]!='' and i!= len(lines)-1:
@@ -109,12 +130,11 @@ class page(QMainWindow,QWidget):
         print(p)
         
     def __init__(self):
-        super().__init__(                                                                                                          )
+        super().__init__( )
         
         self.initUI()
         
     def initUI(self):               
-        
         
         QToolTip.setFont(QFont('SansSerif', 10))
 ##        self.textbox = QLineEdit(self)
@@ -130,7 +150,9 @@ class page(QMainWindow,QWidget):
         save.setStatusTip('Save text')
         save.triggered.connect(self.done)
         gg = QAction(QIcon('exit24.png'), 'undo', self)
-
+        delete=QAction(QIcon('delete.png'),'delete',self)
+        delete.triggered.connect(self.delete)
+        delete.setStatusTip('Delete file')
         self.statusBar()
         
 
@@ -141,6 +163,7 @@ class page(QMainWindow,QWidget):
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
         toolbar.addAction(save)
+        toolbar.addAction(delete)
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')    
         self.show()
