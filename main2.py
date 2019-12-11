@@ -91,10 +91,13 @@ class page(QMainWindow):
     
     def initUI(self):               
         menubar = self.menuBar()
-        editmenu = menubar.addMenu('edit')
+        filemenu = menubar.addMenu('Open')
+        editmenu = menubar.addMenu('Edit')
+        ope = QAction(QIcon('exit24.png'), 'Open', self)
+        new = QAction(QIcon('exit24.png'), 'New', self)
+        save = QAction(QIcon('exit24.png'), 'Save', self)
+        qut = QAction(QIcon('exit24.png'), 'Exit', self)
         QToolTip.setFont(QFont('SansSerif', 10))
-        save = QAction(QIcon('save.png'), 'save', self)
-        save.setStatusTip("Save Edition")
         remove = QAction(QIcon('remove.png'), 'remove', self)
         remove.setStatusTip("Remove")
         sina = QAction(QIcon('web.png'), 'text', self)
@@ -104,6 +107,12 @@ class page(QMainWindow):
         hasan.setStatusTip("add Image")
         hasan.triggered.connect(self.getImage)
         self.statusBar()
+
+
+        filemenu.addAction(new)
+        filemenu.addAction(ope)
+        filemenu.addAction(save)
+        filemenu.addAction(qut)
         
 
 
@@ -111,7 +120,6 @@ class page(QMainWindow):
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
         toolbar.addAction(remove)
-        toolbar.addAction(save)
 ##        tool = self.addToolBar('img')
 ##        tool = self.addToolBar(hasan)
         self.setGeometry(0, 0, 1024, 768)
@@ -121,7 +129,7 @@ class page(QMainWindow):
     def getImage(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,"Open", "","All Files (*);;Image Files (*.png, *.jpg, *.gif)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"Open", "","All Files (*);;PNG Files (*.png);;JPEG Files (*.jpg , *.jpeg);;GIF Files (*.gif)", options=options)
         self.im = QPixmap(fileName)
         self.label = QLabel()
         self.label.setPixmap(self.im)
