@@ -140,7 +140,7 @@ class page(QMainWindow,QWidget):
 ##        self.textbox = QLineEdit(self)
 ##        self.textbox.move(20, 20)
 ##        self.textbox.resize(280,40)
-        sina = QAction(QIcon('web.png'), 'text', self)
+        sina = QAction(QIcon('text.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
         hasan= QAction(QIcon('img.png'), 'image', self)
