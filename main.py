@@ -97,13 +97,6 @@ class page(QMainWindow,QWidget):
                 lines.append( block.text() )
             os.remove(lines[0])
     def done(self):
-        self.rr=(open('t.txt','r')).readlines()
-        self.e=int(self.rr[0])
-        self.e+=1
-        self.wr=open('t.txt','w')
-        self.wr.write(str(self.e))
-        print(self.e)
-        self.wr.close()
         doc = self.textedit.document()
         block = doc.begin()
         lines = [ block.text() ]
@@ -140,7 +133,7 @@ class page(QMainWindow,QWidget):
 ##        self.textbox = QLineEdit(self)
 ##        self.textbox.move(20, 20)
 ##        self.textbox.resize(280,40)
-        sina = QAction(QIcon('text.png'), 'text', self)
+        sina = QAction(QIcon('web.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
         hasan= QAction(QIcon('img.png'), 'image', self)
