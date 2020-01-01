@@ -149,9 +149,6 @@ class page(QMainWindow,QWidget):
         self.statusBar()
         
 
-        menubar = self.menuBar()
-        editmenu = menubar.addMenu('edit')
-        editmenu.addAction(gg)
         toolbar = self.addToolBar('site')
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
