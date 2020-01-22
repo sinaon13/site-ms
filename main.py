@@ -108,7 +108,7 @@ class page(QMainWindow,QWidget):
         print(self.cords)
         self.w=open(lines[0]+'.txt','w')
         if self.d=='i':
-            p=lines[0]+'.img'+'\n'
+            p=lines[0]+'\n'
         elif self.d=='t':
             p=lines[0]+'.txt'+'\n'
         for i in range(1,len(lines)):
