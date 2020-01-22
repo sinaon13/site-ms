@@ -11,6 +11,19 @@ for file in glob.glob("*.txt"):
 
 a=input('site name:')
 ht=open(a+'.html','w')
-ht.write('<!DOCTYPE html>\n<html>\n<head>\n<title>'+a+'</title>\n</head>\n</html>')
+ht.write('''<!DOCTYPE html><html><head>
+<title>'''+a+'''</title>
+<style>
+.topl1{
+top:45px;
+left:168px;
+}
+</style>
+</head>
+<body>
+<p class="topl1">sina on va hasan kheng</p>
+</body>
+</html>
+''')
 ht.close()
 
