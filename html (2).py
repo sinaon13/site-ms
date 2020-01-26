@@ -1,29 +1,22 @@
-import glob, os
-os.chdir(os.getcwd())
-img=[]
-txt=[]
-for file in glob.glob("*.txt"):
-    r=open(file,'r').readlines()
-    if r[0][-4:][:-1] == 'txt' :
-        txt.append(r[1:-1]+r[-1].split())
-    else :
-        img.append([r[0][:-5]]+r[-1].split())
-print(txt)
-a=input('site name:')
-ht=open(a+'.html','w')
-ht.write('''<!DOCTYPE html><html><head>
-<title>'''+a+'''</title>
-<style>''')
-for i in txt:
-    
-         
-
-'''</style>
-</head>
+import os
+file = input()
+with open(file, 'r') as f:
+    lines = f.readlines()
+    with open(file + '.html', 'w') as F:
+        F.write('''
+<!DOCTYPE html>
+<html>
+<style>
+.pos{
+    position : absolute;
+    left: ''' + lines[1].split()[0] + '''px;
+    top: ''' + lines[1].split()[1] + '''px;
+</style>
 <body>
-
+<img class = "pos" src = "''' + lines[0] + '''" alt = "No Image">
 </body>
-</html>
-'''
-ht.close()
+</html>''')
+        F.close()
+    f.close()
+        
 
