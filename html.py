@@ -1,4 +1,5 @@
 import glob, os
+import fnmatch
 os.chdir(os.getcwd())
 img=[]
 txt=[]
@@ -6,8 +7,16 @@ for file in glob.glob("*.txt"):
     r=open(file,'r').readlines()
     if r[0][-4:][:-1] == 'txt' :
         txt.append(r[1:-1]+r[-1].split())
-    else :
+    else:
         img.append([r[0][:-5]]+r[-1].split())
+def get_files():
+    listOfFiles = os.listdir('.')
+    l = []
+    pattern = "*.png.txt"
+    for entry in listOfFiles:
+        if fnmatch.fnmatch(entry, pattern):
+                l.append(entry)
+    return l
 oo=''
 o=[]
 for i in range(len(txt)):
@@ -30,7 +39,7 @@ img2=[]
 fl=1
 for i in txt:
     txt2.append('p'+str(fl))
-    
+
     ht.write('.p'+str(fl)+'''{
     position: absolute;
     top: '''+str(i[-1])+'''px;
@@ -46,8 +55,6 @@ ht.write('''</style>
 for i in range(len(txt2)):
     ht.write('<p '+'class="'+txt2[i]+'">'+txt[i][0]+'''</p>
 ''')
+
 ht.write('''</body>
 </html>''')
-ht.close()
-print(txt,txt2)       
-
