@@ -138,11 +138,7 @@ class page(QMainWindow,QWidget):
                 block = block.next()
                 lines.append( block.text() )
             os.remove(lines[0])
-        t = ''
-        for i in lines:
-            if i == lines[-4]:
-                break
-            t+= i
+
             
     def done(self):
         doc = self.textedit.document()
@@ -151,21 +147,15 @@ class page(QMainWindow,QWidget):
         for i in range( 1, doc.blockCount() ):
             block = block.next()
             lines.append( block.text() )
-        cors=lines[-1].split()
-        self.cords=[int(cors[0]),int(cors[1])]
-        print(self.cords)
         self.w=open(lines[0]+'.txt','w')
         if self.d=='i':
             p=lines[0]+'\n'
         elif self.d=='t':
             p=lines[0]+'.txt'+'\n'
         for i in range(1,len(lines)):
-            if lines[i]=='':
+            p+=lines[i]
+            if i!=len(lines)-1:
                 p+='\n'
-            elif lines[i]!='' and i!= len(lines)-1:
-                p+=lines[i]+'\n'
-            else:
-                p+=lines[i]
         self.w.write(p)
         self.w.close()
         print(p)

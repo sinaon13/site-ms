@@ -19,15 +19,16 @@ def get_files():
     return l
 oo=''
 o=[]
-for i in range(len(txt)):
-    for g in range(len(txt[i])):
-        if g<len(txt[i])-2:
-            oo+=txt[i][g]
-    o=[txt[i][-2]]+[txt[i][-1]]
-    txt[i]=[oo]+o
-    o=[]
-    oo=''
 print(txt)
+##for i in range(len(txt)):
+##    for g in range(len(txt[i])):
+##        if g<len(txt[i])-2:
+##            oo+=txt[i][g]
+##    o=[txt[i][-2]]+[txt[i][-1]]
+##    txt[i]=[oo]+o
+##    o=[]
+##    oo=''
+##print(txt)
 a=input('site name:')
 ht=open(a+'.html','w')
 ht.write('''<!DOCTYPE html><html><head>
@@ -41,9 +42,9 @@ for i in txt:
     txt2.append('p'+str(fl))
 
     ht.write('.p'+str(fl)+'''{
-    position: absolute;
-    top: '''+str(i[-1])+'''px;
-    left: '''+str(i[-2])+'''px;
+    font-size: '''+str(i[-2][:-1])+'px;'+'\n'
+    'color:'+i[-1]+''';
+    font-family:'''+i[-3][:-1]+';''''
     }
 
 ''')
@@ -52,9 +53,11 @@ ht.write('''</style>
 </head>
 <body>
 ''')
+print(txt2)
 for i in range(len(txt2)):
-    ht.write('<p '+'class="'+txt2[i]+'">'+txt[i][0]+'''</p>
-''')
+    clas='class="'+txt2[i]+'"'
+    ht.write('<p '+clas+'>'+txt[i][0][:-1]+'</p>')
 
 ht.write('''</body>
 </html>''')
+ht.close()
