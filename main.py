@@ -2,7 +2,7 @@ import sys
 import os
 import pygame as pg
 
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip, 
+from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip,
     QPushButton,QMessageBox ,QLineEdit, QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
 from PyQt5.QtGui import QIcon,QFont
 class GUI:
@@ -46,46 +46,47 @@ class Image(pg.sprite.Sprite):
         self.image.blit(f, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
+dictionary = {"red" : (255, 0, 0), "green" : (0, 255, 0), "blue" : (0, 0, 255), "black" : (0, 0, 0), "white" : (255, 255, 255), "yellow" : (255, 255, 0)}
 class Example(QWidget):
-    
+
     def __init__(self):
         super().__init__()
-        
+
         self.initUI()
 
         self. sina = khar()
     def initUI(self):
-        
+
         lbl1 = QLabel('Site Maker', self)
         lbl1.move(200, 50)
-        
+
         QToolTip.setFont(QFont('SansSerif', 50))
 
         self.resize(440,250)
         self.center()
         self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('webb.png'))        
+        self.setWindowIcon(QIcon('webb.png'))
 
         start=QPushButton('START',self)
         start.setToolTip('press it to make sites!')
         start.resize(start.sizeHint())
         start.move(190,160)
         start.clicked.connect(self.s)
-        
-        self.show() 
-        
-        
+
+        self.show()
+
+
     def closeEvent(self, event):
-        
+
         reply = QMessageBox.question(self, 'Sure?',
-            "Are you sure to quit?", QMessageBox.Yes | 
+            "Are you sure to quit?", QMessageBox.Yes |
             QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
         else:
-            event.ignore()  
+            event.ignore()
     def center(self):
-        
+
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
@@ -96,27 +97,27 @@ class Example(QWidget):
 
 
 class khar(QMainWindow):
-    
+
     def __init__(self):
         super().__init__()
-        
+
         self.initUI()
-        
-        
-    def initUI(self):               
-        
+
+
+    def initUI(self):
+
         self.statusBar().showMessage('Site Builder')
-        
+
         self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('Statusbar')    
+        self.setWindowTitle('Statusbar')
         self.show()
-        
+
 class khar(QWidget):
-    
+
     def __init__(self):
         super().__init__()
         self.initUI()
-    def initUI(self):               
+    def initUI(self):
         self.setWindowTitle('Site Maker')
         self.setWindowIcon(QIcon('webb.png'))
 class page(QMainWindow,QWidget):
@@ -139,7 +140,7 @@ class page(QMainWindow,QWidget):
                 lines.append( block.text() )
             os.remove(lines[0])
 
-            
+
     def done(self):
         doc = self.textedit.document()
         block = doc.begin()
@@ -156,17 +157,27 @@ class page(QMainWindow,QWidget):
             p+=lines[i]
             if i!=len(lines)-1:
                 p+='\n'
+        """
+        if self.d == 't':
+            self.gui.add_item(Text(lines[1], (0, 0), lines[2], int(lines[3]), dictionary[lines[4]]))
+
+        else:
+            self.gui.add_item(Image(lines[0], (0, 0)))
+
+
+        """
         self.w.write(p)
         self.w.close()
         print(p)
-        
+
     def __init__(self):
         super().__init__( )
         self.gui = GUI()
+        self.sele = None
         self.initUI()
-        
-    def initUI(self):               
-        
+
+    def initUI(self):
+
         QToolTip.setFont(QFont('SansSerif', 10))
 ##        self.textbox = QLineEdit(self)
 ##        self.textbox.move(20, 20)
@@ -185,7 +196,7 @@ class page(QMainWindow,QWidget):
         delete.triggered.connect(self.delete)
         delete.setStatusTip('Delete file')
         self.statusBar()
-        
+
 
         toolbar = self.addToolBar('site')
         toolbar.addAction(sina)
@@ -193,14 +204,13 @@ class page(QMainWindow,QWidget):
         toolbar.addAction(save)
         toolbar.addAction(delete)
         self.setGeometry(300, 300, 350, 250)
-        self.setWindowTitle('Site Maker')    
+        self.setWindowTitle('Site Maker')
         self.show()
-        
-        
-        
+
+
+
 if __name__ == '__main__':
-    
+
     app = QApplication(sys.argv)
     ex = Example()
     sys.exit(app.exec_())
-
