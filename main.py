@@ -1,17 +1,45 @@
 import sys
 import os
 import pygame as pg
+from threading import Thread
 
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip,
     QPushButton,QMessageBox ,QLineEdit, QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
 from PyQt5.QtGui import QIcon,QFont
+pg.font.init()
+vec = pg.math.Vector2
 class GUI:
     def __init__(self):
         self.screen = pg.display.set_mode((800, 600))
-        pg.display.set_caption("Sina f**k kesh")
+        pg.display.set_caption("GUI")
         self.sprites = pg.sprite.Group()
+        self.mouse = Mouse()
         self.screen.fill((255, 255, 255))
         pg.display.flip()
+        Thread(target = self.events).start()
+
+    def events(self):
+        f = False
+        distance = vec(0, 0)
+        while 1:
+            for event in pg.event.get():
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    hits = pg.sprite.spritecollide(self.mouse, self.sprites, True)
+                    if hits:
+                        hit = hits[0]
+                        f = True
+                        distance.x = self.mouse.rect.x - hit.rect.x
+                        distance.y = self.mouse.rect.y - hit.rect.y
+
+                if event.type == pg.MOUSEBUTTONUP:
+                    f = False
+
+            if f:
+                hit.rect = vec(self.mouse.rect.x, self.mouse.rect.y) - distance
+            self.sprites.update()
+            print(distance)
+
+            self.update()
 
     def update(self):
         self.screen.fill((255, 255, 255))
@@ -28,12 +56,14 @@ class Text(pg.sprite.Sprite):
             f = pg.font.Font(pg.font.match_font(font), size)
             txt = f.render(text, True, color)
             self.image = pg.Surface((txt.get_width(),txt.get_height()))
+            self.image.set_colorkey((0, 0, 0))
             self.image.blit(txt, (0, 0))
 
         else:
             f = pg.font.Font('arial', 20)
             txt = f.render(text, True, (0, 0, 0))
             self.image = pg.Surface((txt.get_width(),txt.get_height()))
+            self.image.set_colorkey((0, 0, 0))
             self.image.blit(txt, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
@@ -43,10 +73,26 @@ class Image(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         f = pg.image.load(img)
         self.image = pg.Surface(f.get_size())
+        self.image.set_colorkey((0, 0, 0))
         self.image.blit(f, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
-dictionary = {"red" : (255, 0, 0), "green" : (0, 255, 0), "blue" : (0, 0, 255), "black" : (0, 0, 0), "white" : (255, 255, 255), "yellow" : (255, 255, 0)}
+
+class Mouse(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((1, 1))
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        Thread(target = self.update).start()
+
+    def update(self):
+        while 1:
+            for event in pg.event.get():
+                if event.type == pg.MOUSEMOTION:
+                    self.rect.center = event.pos
+                    print(self.rect)
+dictionary = {"red" : (255, 0, 0), "green" : (0, 255, 0), "blue" : (0, 0, 255), "black" : (1, 1, 1), "white" : (255, 255, 255), "yellow" : (255, 255, 0)}
 class Example(QWidget):
 
     def __init__(self):
@@ -157,15 +203,14 @@ class page(QMainWindow,QWidget):
             p+=lines[i]
             if i!=len(lines)-1:
                 p+='\n'
-        """
         if self.d == 't':
-            self.gui.add_item(Text(lines[1], (0, 0), lines[2], int(lines[3]), dictionary[lines[4]]))
+            for i in lines[1:-3]:
+                self.gui.add_item(Text(i, (0, 0), lines[-3], int(lines[-2]), dictionary[lines[-1]]))
 
         else:
             self.gui.add_item(Image(lines[0], (0, 0)))
 
-
-        """
+        self.gui.update()
         self.w.write(p)
         self.w.close()
         print(p)
