@@ -19,26 +19,20 @@ class GUI:
         Thread(target = self.events).start()
 
     def events(self):
-        f = False
         distance = vec(0, 0)
         while 1:
-            for event in pg.event.get():
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    hits = pg.sprite.spritecollide(self.mouse, self.sprites, True)
-                    if hits:
-                        hit = hits[0]
-                        f = True
-                        distance.x = self.mouse.rect.x - hit.rect.x
-                        distance.y = self.mouse.rect.y - hit.rect.y
-
-                if event.type == pg.MOUSEBUTTONUP:
-                    f = False
-
-            if f:
-                hit.rect = vec(self.mouse.rect.x, self.mouse.rect.y) - distance
-            self.sprites.update()
-            print(distance)
-
+            mouse = pg.mouse.get_pressed()
+            r, m, l = mouse
+            if r:
+                hits = pg.sprite.spritecollide(self.mouse, self.sprites, False)
+                if hits:
+                    if distance == vec(0, 0):
+                        distance.x = self.mouse.rect.x - hits[0].rect.x
+                        distance.y = self.mouse.rect.y - hits[0].rect.y
+                    hits[0].rect.x = self.mouse.rect.x - distance.x
+                    hits[0].rect.y = self.mouse.rect.y - distance.y
+            else:
+                distance = vec(0, 0)
             self.update()
 
     def update(self):
@@ -50,7 +44,7 @@ class GUI:
         self.sprites.add(item)
 
 class Text(pg.sprite.Sprite):
-    def __init__(self, text, pos, font = None, size = None, color = None):
+    def __init__(self, text, pos, file, font = None, size = None, color = None):
         pg.sprite.Sprite.__init__(self)
         if font and size and color:
             f = pg.font.Font(pg.font.match_font(font), size)
@@ -67,9 +61,28 @@ class Text(pg.sprite.Sprite):
             self.image.blit(txt, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
+        self.file = file + '.txt'
+        Thread(target = self.auto_save).start()
+
+    def auto_save(self):
+        while 1:
+            with open(self.file, 'r') as f:
+                lines = f.readlines()
+                l = []
+                with open(self.file, 'w') as F:
+                    for line in lines[:6]:
+                        l.append(line)
+                    if len(l) < 6:
+                        l[-1] += '\n'
+                    print(l)
+                    for line in l:
+                        F.write(line)
+                    F.write('\n' + str(self.rect.x) + ' ' + str(self.rect.y))
+                    F.close()
+                f.close()
 
 class Image(pg.sprite.Sprite):
-    def __init__(self, img, pos):
+    def __init__(self, img, pos, file):
         pg.sprite.Sprite.__init__(self)
         f = pg.image.load(img)
         self.image = pg.Surface(f.get_size())
@@ -77,13 +90,16 @@ class Image(pg.sprite.Sprite):
         self.image.blit(f, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
+        self.file = file +'.txt'
 
-class Mouse(pg.sprite.Sprite):
+class Mouse(pg.sprite.Sprite, pg.Rect):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((1, 1))
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
         Thread(target = self.update).start()
 
     def update(self):
@@ -91,7 +107,6 @@ class Mouse(pg.sprite.Sprite):
             for event in pg.event.get():
                 if event.type == pg.MOUSEMOTION:
                     self.rect.center = event.pos
-                    print(self.rect)
 dictionary = {"red" : (255, 0, 0), "green" : (0, 255, 0), "blue" : (0, 0, 255), "black" : (1, 1, 1), "white" : (255, 255, 255), "yellow" : (255, 255, 0)}
 class Example(QWidget):
 
@@ -205,10 +220,10 @@ class page(QMainWindow,QWidget):
                 p+='\n'
         if self.d == 't':
             for i in lines[1:-3]:
-                self.gui.add_item(Text(i, (0, 0), lines[-3], int(lines[-2]), dictionary[lines[-1]]))
+                self.gui.add_item(Text(i, (0, 0), lines[0], lines[-3], int(lines[-2]), dictionary[lines[-1]]))
 
         else:
-            self.gui.add_item(Image(lines[0], (0, 0)))
+            self.gui.add_item(Image(lines[0], (0, 0), lines[0]))
 
         self.gui.update()
         self.w.write(p)
