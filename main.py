@@ -72,9 +72,10 @@ class Text(pg.sprite.Sprite):
                 with open(self.file, 'w') as F:
                     for line in lines[:6]:
                         l.append(line)
-                    if len(l) < 6:
-                        l[-1] += '\n'
-                    print(l)
+                    try:
+                        if len(l) < 6:
+                            l[-1] += '\n'
+                    except:pass
                     for line in l:
                         F.write(line)
                     F.write('\n' + str(self.rect.x) + ' ' + str(self.rect.y))
@@ -91,6 +92,20 @@ class Image(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
         self.file = file +'.txt'
+        Thread(target = self.update).start()
+
+    def update(self):
+        while 1:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()[0]
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            F.write(i)
+                        F.write(str(self.rect.x)+' '+str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:pass
 
 class Mouse(pg.sprite.Sprite, pg.Rect):
     def __init__(self):
@@ -199,7 +214,7 @@ class page(QMainWindow,QWidget):
             for i in range( 1, doc.blockCount() ):
                 block = block.next()
                 lines.append( block.text() )
-            os.remove(lines[0])
+            os.remove(lines[0] + ".txt")
 
 
     def done(self):
