@@ -2,10 +2,10 @@ import sys
 import os
 import pygame as pg
 from threading import Thread
-
-from PyQt5.QtWidgets import (QMainWindow, QWidget, QToolTip,
-    QPushButton,QMessageBox ,QLineEdit, QApplication, QDesktopWidget, QLabel,QLineEdit, QTextEdit, QAction)
-from PyQt5.QtGui import QIcon,QFont
+import glob
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 pg.font.init()
 vec = pg.math.Vector2
 class GUI:
@@ -244,19 +244,33 @@ class page(QMainWindow,QWidget):
         self.w.write(p)
         self.w.close()
         print(p)
-
+    
+    def load(self):
+        menu=self.menuBar()
+        menubar=menu.addMenu("loaded")
+        self.files=[]
+        self.fl=[]
+        for self.file in glob.glob("*.txt"):
+            self.files.append(self.file)
+            self.option=QAction( self.file , self)
+            self.fl.append(self.option)
+            self.option.triggered.connect(self.loading)
+            menubar.addAction(self.option)
+    def loading(self):
+        print(self.file)
     def __init__(self):
         super().__init__( )
         self.gui = GUI()
         self.sele = None
         self.initUI()
-
     def initUI(self):
 
         QToolTip.setFont(QFont('SansSerif', 10))
 ##        self.textbox = QLineEdit(self)
 ##        self.textbox.move(20, 20)
 ##        self.textbox.resize(280,40)
+        
+        
         sina = QAction(QIcon('web.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
@@ -270,6 +284,9 @@ class page(QMainWindow,QWidget):
         delete=QAction(QIcon('delete.png'),'delete',self)
         delete.triggered.connect(self.delete)
         delete.setStatusTip('Delete file')
+        load=QAction(QIcon('load.png'), 'open', self)
+        load.triggered.connect(self.load)
+        load.setStatusTip('open previous files')
         self.statusBar()
 
 
@@ -278,6 +295,7 @@ class page(QMainWindow,QWidget):
         toolbar.addAction(hasan)
         toolbar.addAction(save)
         toolbar.addAction(delete)
+        toolbar.addAction(load)
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')
         self.show()
