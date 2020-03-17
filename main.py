@@ -206,6 +206,13 @@ class page(QMainWindow,QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d='i'
+
+    def button(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d='b'
+
+        
     def delete(self):
         doc = self.textedit.document()
         block = doc.begin()
@@ -229,6 +236,8 @@ class page(QMainWindow,QWidget):
             p=lines[0]+'\n'
         elif self.d=='t':
             p=lines[0]+'.txt'+'\n'
+        elif self.d=='b':
+            p=lines[0]+'btn'+'\n'
         for i in range(1,len(lines)):
             p+=lines[i]
             if i!=len(lines)-1:
@@ -236,11 +245,10 @@ class page(QMainWindow,QWidget):
         if self.d == 't':
             for i in lines[1:-3]:
                 self.gui.add_item(Text(i, (0, 0), lines[0], lines[-3], int(lines[-2]), dictionary[lines[-1]]))
-
-        else:
+                self.gui.update()
+        elif self.d=='i':
             self.gui.add_item(Image(lines[0], (0, 0), lines[0]))
-
-        self.gui.update()
+            self.gui.update()
         self.w.write(p)
         self.w.close()
         print(p)
@@ -256,6 +264,9 @@ class page(QMainWindow,QWidget):
             self.fl.append(self.option)
             self.option.triggered.connect(self.loading)
             menubar.addAction(self.option)
+
+
+        
     def loading(self):
         print(self.file)
     def __init__(self):
@@ -277,6 +288,9 @@ class page(QMainWindow,QWidget):
         hasan= QAction(QIcon('img.png'), 'image', self)
         hasan.setStatusTip('Add Image')
         hasan.triggered.connect(self.blue)
+        button=QAction(QIcon('button.png'), 'button' , self)
+        button.setStatusTip('Add Button')
+        button.triggered.connect(self.button)
         save = QAction(QIcon('save.png'),'save', self)
         save.setStatusTip('Save text')
         save.triggered.connect(self.done)
@@ -293,6 +307,7 @@ class page(QMainWindow,QWidget):
         toolbar = self.addToolBar('site')
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
+        toolbar.addAction(button)
         toolbar.addAction(save)
         toolbar.addAction(delete)
         toolbar.addAction(load)
