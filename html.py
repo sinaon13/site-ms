@@ -71,9 +71,9 @@ for i in txt:
     txt2.append('p'+str(fl))
 
     ht.write('.p'+str(fl)+'''{
-    font-size: '''+str(i[-6][:-1])+'px;'+'\n'
-    'color:'+i[-5]+''';
-    font-family:'''+i[-7][:-1]+';''''
+    font-size: '''+str(i[-5][:-1])+'px;'+'\n'
+    'color:'+i[-4]+''';
+    font-family:'''+i[-6][:-1]+';''''
     position: absolute;
     left : ''' + i[-2] + '''px;
     top : ''' + i[-1] + '''px;
@@ -100,7 +100,7 @@ for i in btn:
     position: absolute;
     left : ''' + str(int(i[-2]) + 50)  + '''px;
     top : ''' + str(int(i[-1]) + 50) + '''px;
-    background-color : ''' + i[-5] + ''';
+    background-color : ''' + i[-6] + ''';
 }''')
 
 ht.write('''</style>
@@ -117,7 +117,7 @@ for i in range(len(img2)):
 
 for i in range(len(btn2)):
     clas='class="'+btn2[i]+'"'
-    ht.write('<button '+clas+' onclick = "' + btn[i][-3].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
+    ht.write('<button '+clas+' onclick = "' + btn[i][-4].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
 ht.write('''</body>
 </html>''')
 ht.close()

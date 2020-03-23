@@ -8,7 +8,6 @@ pg.font.init()
 vec = pg.math.Vector2
 
 class GUI:
-
     def __init__(self):
         self.screen = pg.display.set_mode((800, 600))
         pg.display.set_caption('GUI')
@@ -46,22 +45,20 @@ class GUI:
 
 class Text(pg.sprite.Sprite):
 
-    def __init__(self, text, pos, file, font=None, size=None, color=None):
+    def __init__(self, text, pos, file, font='arial', size=None, color=None):
         pg.sprite.Sprite.__init__(self)
-        if font:
-            pass
         if size:
             if color:
                 f = pg.font.Font(pg.font.match_font(font), size)
                 txt = f.render(text, True, color)
                 self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.set_colorkey((0, 0, 0))
+                self.image.fill((255, 255, 255))
                 self.image.blit(txt, (0, 0))
             else:
                 f = pg.font.Font('arial', 20)
                 txt = f.render(text, True, (0, 0, 0))
                 self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.set_colorkey((0, 0, 0))
+                self.image.set_colorkey((255, 255, 255))
                 self.image.blit(txt, (0, 0))
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = pos
@@ -70,26 +67,25 @@ class Text(pg.sprite.Sprite):
 
     def auto_save(self):
         while True:
-            with open(self.file, 'r') as (f):
-                lines = f.readlines()
-                l = []
-                with open(self.file, 'w') as (F):
-                    for line in lines[:6]:
-                        l.append(line)
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()
+                    if len(lines) > 5:
+                        lines = lines[:5]
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            if i != lines[-1]:
+                                x = i[:-1]
 
-                    try:
-                        if len(l) < 6:
-                            l[(-1)] += '\n'
-                    except:
-                        pass
-
-                    for line in l:
-                        F.write(line)
-
-                    F.write('\n' + str(self.rect.x) + ' ' + str(self.rect.y))
-                    F.close()
-                f.close()
-
+                            else:
+                                x = i
+                            F.write(x)
+                            F.write('\n')
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:
+                pass
 
 class Image(pg.sprite.Sprite):
 
@@ -137,6 +133,42 @@ class Mouse(pg.sprite.Sprite, pg.Rect):
                 if event.type == pg.MOUSEMOTION:
                     self.rect.center = event.pos
 
+class Button(pg.sprite.Sprite):
+    def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14):
+        font = pg.font.Font(pg.font.match_font(font), font_size)
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface(size)
+        self.w, self.h = size
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+        self.rect.x , self.rect.y = pos
+        txt = font.render(text, True, (255, 255, 255))
+        txt_rct = txt.get_rect()
+        txt_rct.center = self.w // 2 , self.h // 2
+        self.image.blit(txt, txt_rct)
+        self.file = file
+        Thread(target = self.update).start()
+
+    def update(self):
+        while True:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()
+                    if len(lines) > 4:
+                        lines = lines[:4]
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            if i != lines[-1]:
+                                x = i[:-1]
+                            else:
+                                x = i
+                            F.write(x)
+                            F.write('\n')
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:
+                pass
 
 dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}
@@ -248,6 +280,12 @@ class page(QMainWindow, QWidget):
         elif self.d == 'b':
             p = lines[0] + 'btn' + '\n'
         for i in range(1, len(lines)):
+            if self.d == 'b':
+                if 'script:' in lines[i] and lines[i][-3:] == '.js':
+                    p += lines[i].split(':')[-1]
+                    if i != len(lines) - 1:
+                        p += '\n'
+                    continue
             p += lines[i]
             if i != len(lines) - 1:
                 p += '\n'
@@ -256,14 +294,15 @@ class page(QMainWindow, QWidget):
             for i in lines[1:-3]:
                 self.gui.add_item(Text(i, (0, 0), lines[0], lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
                 self.gui.update()
-
         elif self.d == 'i':
             self.gui.add_item(Image(lines[0], (0, 0), lines[0]))
             self.gui.update()
-        else:
-            self.w.write(p)
-            self.w.close()
-            print(p)
+        elif self.d == 'b':
+            self.gui.add_item(Button(lines[0] + '.txt', lines[0], dictionary[lines[1]], (0, 0), (70, 40)))
+            self.gui.update()
+        self.w.write(p)
+        self.w.close()
+        print(p)
 
     def load(self):
         menu = self.menuBar()
