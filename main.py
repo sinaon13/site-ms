@@ -9,7 +9,7 @@ vec = pg.math.Vector2
 
 class GUI:
     def __init__(self):
-        self.screen = pg.display.set_mode((1800, 900))
+        self.screen = pg.display.set_mode((1800, 900), pg.NOFRAME)
         pg.display.set_caption('GUI')
         icon = pg.image.load('./icons/webb.ico')
         icon.set_colorkey((0, 0, 0))
@@ -21,11 +21,17 @@ class GUI:
         self.mouse = Mouse()
         self.screen.fill((255, 255, 255))
         pg.display.flip()
-        Thread(target=(self.events)).start()
+        self.a = Thread(target=(self.events))
+        self.a.start()
 
     def events(self):
         distance = vec(0, 0)
         while 1:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    del self
+                    sys.exit()
             mouse = pg.mouse.get_pressed()
             r, m, l = mouse
             if r:
@@ -223,6 +229,8 @@ class Example(QWidget):
         reply = QMessageBox.question(self, 'Sure?', 'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
+            pg.quit()
+            sys.exit()
         else:
             event.ignore()
 
@@ -377,6 +385,15 @@ class page(QMainWindow, QWidget):
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')
         self.show()
+
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'Sure?', 'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            event.accept()
+            pg.quit()
+            sys.exit()
+        else:
+            event.ignore()
 
 
 if __name__ == '__main__':
