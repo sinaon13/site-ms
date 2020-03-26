@@ -9,8 +9,14 @@ vec = pg.math.Vector2
 
 class GUI:
     def __init__(self):
-        self.screen = pg.display.set_mode((800, 600))
+        self.screen = pg.display.set_mode((1800, 900))
         pg.display.set_caption('GUI')
+        icon = pg.image.load('./icons/webb.ico')
+        icon.set_colorkey((0, 0, 0))
+        i = pg.Surface(icon.get_size())
+        i.blit(icon, (0, 0))
+        i.set_colorkey((0, 0, 0))
+        pg.display.set_icon(i)
         self.sprites = pg.sprite.Group()
         self.mouse = Mouse()
         self.screen.fill((255, 255, 255))
@@ -63,29 +69,34 @@ class Text(pg.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = pos
             self.file = file + '.txt'
+            self.last = self.image.get_rect()
             Thread(target=(self.auto_save)).start()
 
     def auto_save(self):
         while True:
-            try:
-                with open(self.file, 'r') as f:
-                    lines = f.readlines()
-                    if len(lines) > 5:
-                        lines = lines[:5]
-                    with open(self.file, 'w') as F:
-                        for i in lines:
-                            if i != lines[-1]:
-                                x = i[:-1]
+            if self.last.x != self.rect.x or self.last.y != self.rect.y:
+                try:
+                    with open(self.file, 'r') as f:
+                        lines = f.readlines()
+                        if len(lines) > 5:
+                            lines = lines[:5]
+                        with open(self.file, 'w') as F:
+                            for i in lines:
+                                if i != lines[-1]:
+                                    x = i[:-1]
 
-                            else:
-                                x = i
-                            F.write(x)
-                            F.write('\n')
-                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                        F.close()
-                    f.close()
-            except:
-                pass
+                                else:
+                                    x = i
+                                F.write(x)
+                                F.write('\n')
+                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                            F.close()
+                        f.close()
+                except:
+                    pass
+
+                self.last.x = self.rect.x
+                self.last.y = self.rect.y
 
 class Image(pg.sprite.Sprite):
 
@@ -98,22 +109,29 @@ class Image(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
         self.file = file + '.txt'
+        self.last = self.image.get_rect()
+        self.last.x = self.rect.x
+        self.last.y = self.rect.y
         Thread(target=(self.update)).start()
 
     def update(self):
         while True:
-            try:
-                with open(self.file, 'r') as (f):
-                    lines = f.readlines()[0]
-                    with open(self.file, 'w') as (F):
-                        for i in lines:
-                            F.write(i)
+            if self.last.x != self.rect.x or self.last.y != self.rect.y:
+                try:
+                    with open(self.file, 'r') as (f):
+                        lines = f.readlines()[0]
+                        with open(self.file, 'w') as (F):
+                            for i in lines:
+                                F.write(i)
 
-                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                        F.close()
-                    f.close()
-            except:
-                pass
+                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                            F.close()
+                        f.close()
+                except:
+                    pass
+
+                self.last.x = self.rect.x
+                self.last.y = self.rect.y
 
 
 class Mouse(pg.sprite.Sprite, pg.Rect):
@@ -147,28 +165,34 @@ class Button(pg.sprite.Sprite):
         txt_rct.center = self.w // 2 , self.h // 2
         self.image.blit(txt, txt_rct)
         self.file = file
+        self.last = self.image.get_rect()
+        self.last.x = self.rect.x
+        self.last.y = self.rect.y
         Thread(target = self.update).start()
 
     def update(self):
         while True:
-            try:
-                with open(self.file, 'r') as f:
-                    lines = f.readlines()
-                    if len(lines) > 4:
-                        lines = lines[:4]
-                    with open(self.file, 'w') as F:
-                        for i in lines:
-                            if i != lines[-1]:
-                                x = i[:-1]
-                            else:
-                                x = i
-                            F.write(x)
-                            F.write('\n')
-                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                        F.close()
-                    f.close()
-            except:
-                pass
+            if self.last.x != self.rect.x or self.last.y != self.rect.y:
+                try:
+                    with open(self.file, 'r') as f:
+                        lines = f.readlines()
+                        if len(lines) > 4:
+                            lines = lines[:4]
+                        with open(self.file, 'w') as F:
+                            for i in lines:
+                                if i != lines[-1]:
+                                    x = i[:-1]
+                                else:
+                                    x = i
+                                F.write(x)
+                                F.write('\n')
+                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                            F.close()
+                        f.close()
+                except:
+                    pass
+                self.last.x = self.rect.x
+                self.last.y = self.rect.y
 
 dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}
@@ -187,7 +211,7 @@ class Example(QWidget):
         self.resize(440, 250)
         self.center()
         self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('webb.png'))
+        self.setWindowIcon(QIcon('./icons/webb.png'))
         start = QPushButton('START', self)
         start.setToolTip('press it to make sites!')
         start.resize(start.sizeHint())
@@ -233,7 +257,7 @@ class khar(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('webb.png'))
+        self.setWindowIcon(QIcon('./icons/webb.png'))
 
 
 class page(QMainWindow, QWidget):
@@ -302,7 +326,6 @@ class page(QMainWindow, QWidget):
             self.gui.update()
         self.w.write(p)
         self.w.close()
-        print(p)
 
     def load(self):
         menu = self.menuBar()
@@ -316,9 +339,6 @@ class page(QMainWindow, QWidget):
             self.option.triggered.connect(self.loading)
             menubar.addAction(self.option)
 
-    def loading(self):
-        print(self.file)
-
     def __init__(self):
         super().__init__()
         self.gui = GUI()
@@ -327,23 +347,23 @@ class page(QMainWindow, QWidget):
 
     def initUI(self):
         QToolTip.setFont(QFont('SansSerif', 10))
-        sina = QAction(QIcon('web.png'), 'text', self)
+        sina = QAction(QIcon('./icons/web.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
-        hasan = QAction(QIcon('img.png'), 'image', self)
+        hasan = QAction(QIcon('./icons/img.png'), 'image', self)
         hasan.setStatusTip('Add Image')
         hasan.triggered.connect(self.blue)
-        button = QAction(QIcon('button.png'), 'button', self)
+        button = QAction(QIcon('./icons/button.png'), 'button', self)
         button.setStatusTip('Add Button')
         button.triggered.connect(self.button)
-        save = QAction(QIcon('save.png'), 'save', self)
+        save = QAction(QIcon('./icons/save.png'), 'save', self)
         save.setStatusTip('Save text')
         save.triggered.connect(self.done)
-        gg = QAction(QIcon('exit24.png'), 'undo', self)
-        delete = QAction(QIcon('delete.png'), 'delete', self)
+        gg = QAction(QIcon('./icons/exit24.png'), 'undo', self)
+        delete = QAction(QIcon('./icons/delete.png'), 'delete', self)
         delete.triggered.connect(self.delete)
         delete.setStatusTip('Delete file')
-        load = QAction(QIcon('load.png'), 'open', self)
+        load = QAction(QIcon('./icons/load.png'), 'open', self)
         load.triggered.connect(self.load)
         load.setStatusTip('open previous files')
         self.statusBar()

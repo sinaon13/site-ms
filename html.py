@@ -38,11 +38,10 @@ print(btn)
 print(img)
 print(txt)
 scription = []
-if len(btn) > 0:
-    for i in btn:
-        if i[-4][-4:-1] == '.js':
-            if(i[-4] not in scription):
-                scription.append(i[-4][:-1])
+for i in btn:
+    if i[-5][-4:-1] == '.js':
+        if(i[-5][:-1] not in scription):
+            scription.append(i[-5][:-1])
 btn2 = []
 print(scription)
 ##for i in range(len(txt)):
@@ -98,10 +97,11 @@ for i in btn:
     btn2.append('b' + str(fl))
     ht.write('.b' + str(fl) + '''{
     position: absolute;
-    left : ''' + str(int(i[-2]) + 50)  + '''px;
-    top : ''' + str(int(i[-1]) + 50) + '''px;
+    left : ''' + str(int(i[-2]) + 70)  + '''px;
+    top : ''' + str(int(i[-1]) + 70) + '''px;
     background-color : ''' + i[-6] + ''';
 }''')
+    fl += 1
 
 ht.write('''</style>
 </head>
