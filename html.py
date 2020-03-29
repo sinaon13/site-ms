@@ -1,9 +1,10 @@
 import glob, os
 import fnmatch
-os.chdir(os.getcwd())
+os.chdir(input())
 img=[]
 txt=[]
 btn = []
+inp = []
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -25,6 +26,13 @@ for file in glob.glob("*.txt"):
     if r[0][-4:][:-1] == 'btn' :
         btn.append(r[1:-1]+r[-1].split())
         btn_name.append(r[0][:-1])
+
+for file in glob.glob("*.txt"):
+    if ".png" in file:
+        continue
+    r=open(file,'r').readlines()
+    if r[0][-4:][:-1] == 'inp' :
+        inp.append(r[1:-1]+r[-1].split())
 img = []
 for i in im:
     q = []
@@ -43,6 +51,7 @@ for i in btn:
         if(i[-5][:-1] not in scription):
             scription.append(i[-5][:-1])
 btn2 = []
+inp2 = []
 print(scription)
 ##for i in range(len(txt)):
 ##    for g in range(len(txt[i])):
@@ -53,8 +62,8 @@ print(scription)
 ##    o=[]
 ##    oo=''
 ##print(txt)
-a=input('site name:')
-ht=open(a+'.html','w')
+a=os.getcwd()
+ht=open(a +'\\' + a.split('\\')[-1][:-5]+'.html','w')
 ht.write('''<!DOCTYPE html><html><head>
 ''')
 for i in scription:
@@ -102,6 +111,15 @@ for i in btn:
     background-color : ''' + i[-6] + ''';
 }''')
     fl += 1
+fl = 0
+for i in inp:
+    inp2.append('in' + str(fl))
+    ht.write('.in' + str(fl) + '''{
+    position: absolute;
+    left : ''' + i[-2] + '''px;
+    top : ''' + i[-1] + '''px;
+}''')
+    fl+=1
 
 ht.write('''</style>
 </head>
@@ -118,6 +136,11 @@ for i in range(len(img2)):
 for i in range(len(btn2)):
     clas='class="'+btn2[i]+'"'
     ht.write('<button '+clas+' onclick = "' + btn[i][-4].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
+
+for i in range(len(inp2)):
+    clas='class="'+inp2[i]+'"'
+    ht.write('<input '+clas+' type = "' + inp[i][-4][:-1] + '">')
+
 ht.write('''</body>
 </html>''')
 ht.close()

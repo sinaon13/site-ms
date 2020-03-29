@@ -9,7 +9,7 @@ vec = pg.math.Vector2
 
 class GUI:
     def __init__(self):
-        self.screen = pg.display.set_mode((1800, 900), pg.NOFRAME)
+        self.screen = pg.display.set_mode((1800, 900), pg.RESIZABLE)
         pg.display.set_caption('GUI')
         icon = pg.image.load('./icons/webb.ico')
         icon.set_colorkey((0, 0, 0))
@@ -74,7 +74,7 @@ class Text(pg.sprite.Sprite):
                 self.image.blit(txt, (0, 0))
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = pos
-            self.file = file + '.txt'
+            self.file = file
             self.last = self.image.get_rect()
             Thread(target=(self.auto_save)).start()
 
@@ -114,7 +114,7 @@ class Image(pg.sprite.Sprite):
         self.image.blit(f, (0, 0))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
-        self.file = file + '.txt'
+        self.file = file
         self.last = self.image.get_rect()
         self.last.x = self.rect.x
         self.last.y = self.rect.y
@@ -197,6 +197,37 @@ class Button(pg.sprite.Sprite):
                         f.close()
                 except:
                     pass
+                self.last.x = self.rect.x
+                self.last.y = self.rect.y
+
+class Input(pg.sprite.Sprite):
+    def __init__(self, path, pos, size, color):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface(size)
+        self.image.fill((255, 255, 255))
+        data = [0] * 4
+        data[2], data[3] = size
+        pg.draw.rect(self.image, color, data, 5)
+        self.rect = self.image.get_rect()
+        self.last = self.image.get_rect()
+        self.rect.x, self.rect.y = pos
+        self.last = self.rect
+        self.file = path
+        Thread(target = self.update).start()
+
+    def update(self):
+        while 1:
+            if self.last.x != self.rect.x or self.last.y != self.rect.y:
+                try:
+                    with open(self.file, 'r') as f:
+                        lines = f.readlines()[:3]
+                        lines[-1] += '\n'
+                        with open(self.file, 'w') as F:
+                            for i in lines:
+                                F.write(i)
+                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                            F.close()
+                except:pass
                 self.last.x = self.rect.x
                 self.last.y = self.rect.y
 
@@ -303,15 +334,25 @@ class page(QMainWindow, QWidget):
         for i in range(1, doc.blockCount()):
             block = block.next()
             lines.append(block.text())
-
-        self.w = open(lines[0] + '.txt', 'w')
+        if self.d != 'p':
+            if self.projection != '':
+                file = os.path.join(self.projection ,lines[0]) + '.txt'
+                self.w = open(file, 'w')
+            else:
+                return
         if self.d == 'i':
             p = lines[0] + '\n'
         elif self.d == 't':
             p = lines[0] + '.txt' + '\n'
         elif self.d == 'b':
             p = lines[0] + 'btn' + '\n'
+        elif self.d == 'I':
+            p = lines[0] + 'inp' + '\n'
+        elif self.d == 'p':
+            lines[0] += '.site'
         for i in range(1, len(lines)):
+            if lines[i] == '':
+                continue
             if self.d == 'b':
                 if 'script:' in lines[i] and lines[i][-3:] == '.js':
                     p += lines[i].split(':')[-1]
@@ -321,19 +362,26 @@ class page(QMainWindow, QWidget):
             p += lines[i]
             if i != len(lines) - 1:
                 p += '\n'
-
-        if self.d == 't':
+        if self.d == 'p':
+            self.projection = lines[0]
+            os.mkdir(lines[0])
+            return
+        elif self.d == 't':
             for i in lines[1:-3]:
-                self.gui.add_item(Text(i, (0, 0), lines[0], lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
+                self.gui.add_item(Text(i, (0, 0), file, lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
                 self.gui.update()
         elif self.d == 'i':
-            self.gui.add_item(Image(lines[0], (0, 0), lines[0]))
+            self.gui.add_item(Image(file, (0, 0), lines[0]))
             self.gui.update()
         elif self.d == 'b':
-            self.gui.add_item(Button(lines[0] + '.txt', lines[0], dictionary[lines[1]], (0, 0), (70, 40)))
+            self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (0, 0), (70, 40)))
             self.gui.update()
-        self.w.write(p)
-        self.w.close()
+        elif self.d == 'I':
+            self.gui.add_item(Input(file, (0, 0), (300, 40), dictionary[lines[1]]))
+            self.gui.update()
+        if self.d != 'p':
+            self.w.write(p)
+            self.w.close()
 
     def load(self):
         menu = self.menuBar()
@@ -347,10 +395,16 @@ class page(QMainWindow, QWidget):
             self.option.triggered.connect(self.loading)
             menubar.addAction(self.option)
 
+    def create(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d = 'p'
+
     def __init__(self):
         super().__init__()
         self.gui = GUI()
         self.sele = None
+        self.projection = ''
         self.initUI()
 
     def initUI(self):
@@ -374,11 +428,17 @@ class page(QMainWindow, QWidget):
         load = QAction(QIcon('./icons/load.png'), 'open', self)
         load.triggered.connect(self.load)
         load.setStatusTip('open previous files')
+        new = QAction(QIcon('./icons/new.png'), 'New Project', self)
+        new.triggered.connect(self.create)
+        inp = QAction(QIcon('./icons/input.png'), 'input box', self)
+        inp.triggered.connect(self.inpt)
         self.statusBar()
         toolbar = self.addToolBar('site')
+        toolbar.addAction(new)
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
         toolbar.addAction(button)
+        toolbar.addAction(inp)
         toolbar.addAction(save)
         toolbar.addAction(delete)
         toolbar.addAction(load)
@@ -394,6 +454,11 @@ class page(QMainWindow, QWidget):
             sys.exit()
         else:
             event.ignore()
+
+    def inpt(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d = 'I'
 
 
 if __name__ == '__main__':
