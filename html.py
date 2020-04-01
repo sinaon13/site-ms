@@ -46,12 +46,11 @@ for file in glob.glob("*.txt"):
 
 
 for file in glob.glob("*.txt"):
-    if ".png" or '.txt' in file:
+    if ".png" in file:
         continue
     r=open(file,'r').readlines()
-    if r[0][-4:][:-1] == 'video' :
-        video.append(r[1:-1]+r[-1].split())
-
+    if r[0][-5:][:-1] == '.vid' :
+        video.append([r[0][:-5]]+r[1].split())
         
 img = []
 for i in im:
@@ -65,6 +64,7 @@ o=[]
 print(btn)
 print(img)
 print(txt)
+print(video)
 scription = []
 for i in btn:
     if i[-5][-4:-1] == '.js':
@@ -72,6 +72,7 @@ for i in btn:
             scription.append(i[-5][:-1])
 btn2 = []
 inp2 = []
+vid2=[]
 print(scription)
 ##for i in range(len(txt)):
 ##    for g in range(len(txt[i])):
@@ -143,6 +144,14 @@ for i in inp:
     top : ''' + i[-1] + '''px;
 }''')
     fl+=1
+fl=0
+for i in video:
+    vid2.append('vid' + str(fl))
+    ht.write('.vid'+str(fl) + '''{
+    position: absolute;
+    left:'''+i[1]+'''px;
+    top:'''+ i[2]+'''px;
+}''')
 ht.write('''</style>
 </head>
 <body>
@@ -162,7 +171,12 @@ for i in range(len(btn2)):
 for i in range(len(inp2)):
     clas='class="'+inp2[i]+'"'
     ht.write('<input '+clas+' type = "' + inp[i][-4][:-1] + '">')
-
+for i in range(len(vid2)):
+    clas='class="'+vid2[i]+'"'
+    ht.write('''<video '''+clas+'''controls>
+    <source src="'''+video[i][0]+'''" type="video/mp4">
+    </video>
+    ''')
 ht.write('''</body>
 </html>''')
 ht.close()
