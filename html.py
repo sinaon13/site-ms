@@ -14,6 +14,7 @@ img=[]
 txt=[]
 btn = []
 inp = []
+video=[]
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -42,6 +43,16 @@ for file in glob.glob("*.txt"):
     r=open(file,'r').readlines()
     if r[0][-4:][:-1] == 'inp' :
         inp.append(r[1:-1]+r[-1].split())
+
+
+for file in glob.glob("*.txt"):
+    if ".png" or '.txt' in file:
+        continue
+    r=open(file,'r').readlines()
+    if r[0][-4:][:-1] == 'video' :
+        video.append(r[1:-1]+r[-1].split())
+
+        
 img = []
 for i in im:
     q = []
@@ -132,7 +143,6 @@ for i in inp:
     top : ''' + i[-1] + '''px;
 }''')
     fl+=1
-
 ht.write('''</style>
 </head>
 <body>

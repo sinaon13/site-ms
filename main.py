@@ -310,6 +310,11 @@ class page(QMainWindow, QWidget):
         self.setCentralWidget(self.textedit)
         self.d = 'i'
 
+    def vid(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d = 'v'
+        
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
@@ -352,6 +357,8 @@ class page(QMainWindow, QWidget):
             p = lines[0] + 'inp' + '\n'
         elif self.d == 'p':
             lines[0] += '.site'
+        elif self.d == 'v':
+            p =lines[0] + '.vid' +'\n'
         for i in range(1, len(lines)):
             if lines[i] == '':
                 continue
@@ -417,11 +424,14 @@ class page(QMainWindow, QWidget):
         hasan = QAction(QIcon('./icons/img.png'), 'image', self)
         hasan.setStatusTip('Add Image')
         hasan.triggered.connect(self.blue)
+        vid=QAction(QIcon('./icons/vid.png'), 'video', self)
+        vid.setStatusTip('Add Video')
+        vid.triggered.connect(self.vid)
         button = QAction(QIcon('./icons/button.png'), 'button', self)
         button.setStatusTip('Add Button')
         button.triggered.connect(self.button)
         save = QAction(QIcon('./icons/save.png'), 'save', self)
-        save.setStatusTip('Save text')
+        save.setStatusTip('Save')
         save.triggered.connect(self.done)
         gg = QAction(QIcon('./icons/exit24.png'), 'undo', self)
         delete = QAction(QIcon('./icons/delete.png'), 'delete', self)
@@ -441,6 +451,7 @@ class page(QMainWindow, QWidget):
         toolbar.addAction(new)
         toolbar.addAction(sina)
         toolbar.addAction(hasan)
+        toolbar.addAction(vid)
         toolbar.addAction(button)
         toolbar.addAction(inp)
         toolbar.addAction(save)
