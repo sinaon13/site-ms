@@ -15,6 +15,7 @@ txt=[]
 btn = []
 inp = []
 video=[]
+videoname = []
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -50,8 +51,9 @@ for file in glob.glob("*.txt"):
         continue
     r=open(file,'r').readlines()
     if r[0][-5:][:-1] == '.vid' :
-        video.append([r[0][:-5]]+r[1].split())
-        
+        video.append(r[1:-1] + r[-1].split())
+        videoname.append(r[0][:-5])
+
 img = []
 for i in im:
     q = []
@@ -173,8 +175,8 @@ for i in range(len(inp2)):
     ht.write('<input '+clas+' type = "' + inp[i][-4][:-1] + '">')
 for i in range(len(vid2)):
     clas='class="'+vid2[i]+'"'
-    ht.write('''<video '''+clas+'''controls>
-    <source src="'''+video[i][0]+'''" type="video/mp4">
+    ht.write('''<video '''+clas+''' width = 300 height = 200 controls>
+    <source src="'''+videoname[i]+'''" type="video/''' + videoname[i].split('.')[-1] +'''">
     </video>
     ''')
 ht.write('''</body>

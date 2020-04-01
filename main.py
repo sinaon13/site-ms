@@ -227,9 +227,43 @@ class Input(pg.sprite.Sprite):
                                 F.write(i)
                             F.write(str(self.rect.x) + ' ' + str(self.rect.y))
                             F.close()
+                        f.close()
                 except:pass
                 self.last.x = self.rect.x
                 self.last.y = self.rect.y
+
+class Movie(pg.sprite.Sprite):
+    def __init__(self, m, pos):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface((300, 200))
+        self.image.fill((100, 100, 100))
+        self.rect = self.image.get_rect()
+        self.rect.x , self.rect.y = pos
+        img = pg.Surface((298, 198))
+        img.fill((255, 255, 255))
+        self.image.blit(img, (1, 1))
+        self.last = self.image.get_rect()
+        self.file = m
+        Thread(target = self.update).start()
+
+    def update(self):
+        while 1:
+            if self.last.x != self.rect.x or self.last.y != self.rect.y:
+                try:
+                    with open(self.file, 'r') as f:
+                        lines = f.readlines()[:1]
+                        lines[-1] += '\n'
+                        with open(self.file, 'w') as F:
+                            for i in lines:
+                                F.write(i)
+                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                            F.close()
+                        f.close()
+                except:pass
+                self.last.x = self.rect.x
+                self.last.y = self.rect.y
+
+
 
 dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}
@@ -314,7 +348,7 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'v'
-        
+
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
@@ -358,6 +392,7 @@ class page(QMainWindow, QWidget):
         elif self.d == 'p':
             lines[0] += '.site'
         elif self.d == 'v':
+            os.system('move ' + lines[0] + ' ' + self.projection)
             p =lines[0] + '.vid' +'\n'
         for i in range(1, len(lines)):
             if lines[i] == '':
@@ -387,6 +422,9 @@ class page(QMainWindow, QWidget):
             self.gui.update()
         elif self.d == 'I':
             self.gui.add_item(Input(file, (0, 0), (300, 40), dictionary[lines[1]]))
+            self.gui.update()
+        elif self.d == 'v':
+            self.gui.add_item(Movie(file, (0, 0)))
             self.gui.update()
         if self.d != 'p':
             self.w.write(p)
@@ -444,7 +482,7 @@ class page(QMainWindow, QWidget):
         new.triggered.connect(self.create)
         inp = QAction(QIcon('./icons/input.png'), 'input box', self)
         inp.triggered.connect(self.inpt)
-        cmple = QAction(QIcon("./icon/compile.png"), 'Build', self)
+        cmple = QAction(QIcon("./icons/compile.png"), 'Build', self)
         cmple.triggered.connect(self.compile)
         self.statusBar()
         toolbar = self.addToolBar('site')
