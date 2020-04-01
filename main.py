@@ -235,7 +235,6 @@ dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}
 
 class Example(QWidget):
-
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -326,6 +325,9 @@ class page(QMainWindow, QWidget):
                 lines.append(block.text())
 
             os.remove(lines[0] + '.txt')
+
+    def compile(self):
+        os.system("py html.py --file " + self.projection)
 
     def done(self):
         doc = self.textedit.document()
@@ -432,6 +434,8 @@ class page(QMainWindow, QWidget):
         new.triggered.connect(self.create)
         inp = QAction(QIcon('./icons/input.png'), 'input box', self)
         inp.triggered.connect(self.inpt)
+        cmple = QAction(QIcon("./icon/compile.png"), 'Build', self)
+        cmple.triggered.connect(self.compile)
         self.statusBar()
         toolbar = self.addToolBar('site')
         toolbar.addAction(new)
@@ -442,6 +446,7 @@ class page(QMainWindow, QWidget):
         toolbar.addAction(save)
         toolbar.addAction(delete)
         toolbar.addAction(load)
+        toolbar.addAction(cmple)
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')
         self.show()

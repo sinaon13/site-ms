@@ -1,6 +1,15 @@
 import glob, os
 import fnmatch
-os.chdir(input())
+import argparse
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--file", "-f", type=str, required=True)
+try:
+    args = parser.parse_args()
+    os.chdir(args.file)
+    os.system('cls');
+except:
+    os.chdir(input())
 img=[]
 txt=[]
 btn = []
@@ -106,9 +115,12 @@ for i in btn:
     btn2.append('b' + str(fl))
     ht.write('.b' + str(fl) + '''{
     position: absolute;
-    left : ''' + str(int(i[-2]) + 70)  + '''px;
-    top : ''' + str(int(i[-1]) + 70) + '''px;
+    left : ''' + str(int(i[-2]))  + '''px;
+    top : ''' + str(int(i[-1])) + '''px;
     background-color : ''' + i[-6] + ''';
+    width: 70px;
+    height: 40px;
+    border: 2px solid black;
 }''')
     fl += 1
 fl = 0
