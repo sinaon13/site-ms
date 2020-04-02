@@ -366,7 +366,7 @@ class page(QMainWindow, QWidget):
             os.remove(lines[0] + '.txt')
 
     def compile(self):
-        os.system("py html.py --file " + self.projection)
+        os.system("py html."+ open("info.ini", 'r').readline() +" --file " + self.projection)
 
     def done(self):
         doc = self.textedit.document()
