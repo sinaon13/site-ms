@@ -1,4 +1,5 @@
 import sys, os, pygame as pg
+from random import randint
 from threading import Thread
 import glob
 from PyQt5.QtWidgets import *
@@ -26,25 +27,32 @@ class GUI:
 
     def events(self):
         distance = vec(0, 0)
+        f = False
+        chosen = None
         while 1:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     pg.quit()
                     del self
                     sys.exit()
+                if event.type == pg.MOUSEMOTION:
+                    self.mouse.rect.x , self.mouse.rect.y = event.pos
             mouse = pg.mouse.get_pressed()
             r, m, l = mouse
-            if r:
+            if r and not f:
                 hits = pg.sprite.spritecollide(self.mouse, self.sprites, False)
                 if hits:
-                    if distance == vec(0, 0):
-                        distance.x = self.mouse.rect.x - hits[0].rect.x
-                        distance.y = self.mouse.rect.y - hits[0].rect.y
-                    hits[0].rect.x = self.mouse.rect.x - distance.x
-                    hits[0].rect.y = self.mouse.rect.y - distance.y
-                else:
-                    distance = vec(0, 0)
-                self.update()
+                    distance.x = self.mouse.rect.x - hits[0].rect.x
+                    distance.y = self.mouse.rect.y - hits[0].rect.y
+                    chosen = hits[0]
+                    f = True
+            if not r:
+                f = False
+            if f:
+                chosen.rect.x = self.mouse.rect.x - distance.x
+                chosen.rect.y = self.mouse.rect.y - distance.y
+            self.sprites.update()
+            self.update()
 
     def update(self):
         self.screen.fill((255, 255, 255))
@@ -64,45 +72,43 @@ class Text(pg.sprite.Sprite):
                 f = pg.font.Font(pg.font.match_font(font), size)
                 txt = f.render(text, True, color)
                 self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.fill((255, 255, 255))
                 self.image.blit(txt, (0, 0))
+                self.image.set_colorkey((0, 0, 0))
             else:
                 f = pg.font.Font('arial', 20)
                 txt = f.render(text, True, (0, 0, 0))
                 self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.set_colorkey((255, 255, 255))
                 self.image.blit(txt, (0, 0))
+                self.image.set_colorkey((0, 0, 0))
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = pos
             self.file = file
             self.last = self.image.get_rect()
-            Thread(target=(self.auto_save)).start()
 
-    def auto_save(self):
-        while True:
-            if self.last.x != self.rect.x or self.last.y != self.rect.y:
-                try:
-                    with open(self.file, 'r') as f:
-                        lines = f.readlines()
-                        if len(lines) > 5:
-                            lines = lines[:5]
-                        with open(self.file, 'w') as F:
-                            for i in lines:
-                                if i != lines[-1]:
-                                    x = i[:-1]
+    def update(self):
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()
+                    if len(lines) > 5:
+                        lines = lines[:5]
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            if i != lines[-1]:
+                                x = i[:-1]
 
-                                else:
-                                    x = i
-                                F.write(x)
-                                F.write('\n')
-                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                            F.close()
-                        f.close()
-                except:
-                    pass
+                            else:
+                                x = i
+                            F.write(x)
+                            F.write('\n')
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:
+                pass
 
-                self.last.x = self.rect.x
-                self.last.y = self.rect.y
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
 
 class Image(pg.sprite.Sprite):
 
@@ -118,26 +124,24 @@ class Image(pg.sprite.Sprite):
         self.last = self.image.get_rect()
         self.last.x = self.rect.x
         self.last.y = self.rect.y
-        Thread(target=(self.update)).start()
 
     def update(self):
-        while True:
-            if self.last.x != self.rect.x or self.last.y != self.rect.y:
-                try:
-                    with open(self.file, 'r') as (f):
-                        lines = f.readlines()[0]
-                        with open(self.file, 'w') as (F):
-                            for i in lines:
-                                F.write(i)
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as (f):
+                    lines = f.readlines()[0]
+                    with open(self.file, 'w') as (F):
+                        for i in lines:
+                            F.write(i)
 
-                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                            F.close()
-                        f.close()
-                except:
-                    pass
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:
+                pass
 
-                self.last.x = self.rect.x
-                self.last.y = self.rect.y
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
 
 
 class Mouse(pg.sprite.Sprite, pg.Rect):
@@ -149,13 +153,6 @@ class Mouse(pg.sprite.Sprite, pg.Rect):
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
-        Thread(target=(self.update)).start()
-
-    def update(self):
-        while True:
-            for event in pg.event.get():
-                if event.type == pg.MOUSEMOTION:
-                    self.rect.center = event.pos
 
 class Button(pg.sprite.Sprite):
     def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14):
@@ -174,31 +171,29 @@ class Button(pg.sprite.Sprite):
         self.last = self.image.get_rect()
         self.last.x = self.rect.x
         self.last.y = self.rect.y
-        Thread(target = self.update).start()
 
     def update(self):
-        while True:
-            if self.last.x != self.rect.x or self.last.y != self.rect.y:
-                try:
-                    with open(self.file, 'r') as f:
-                        lines = f.readlines()
-                        if len(lines) > 4:
-                            lines = lines[:4]
-                        with open(self.file, 'w') as F:
-                            for i in lines:
-                                if i != lines[-1]:
-                                    x = i[:-1]
-                                else:
-                                    x = i
-                                F.write(x)
-                                F.write('\n')
-                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                            F.close()
-                        f.close()
-                except:
-                    pass
-                self.last.x = self.rect.x
-                self.last.y = self.rect.y
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()
+                    if len(lines) > 4:
+                        lines = lines[:4]
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            if i != lines[-1]:
+                                x = i[:-1]
+                            else:
+                                x = i
+                            F.write(x)
+                            F.write('\n')
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:
+                pass
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
 
 class Input(pg.sprite.Sprite):
     def __init__(self, path, pos, size, color):
@@ -211,26 +206,25 @@ class Input(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.last = self.image.get_rect()
         self.rect.x, self.rect.y = pos
-        self.last = self.rect
+        self.last = self.image.get_rect()
+        self.last.x, self.last.y = pos
         self.file = path
-        Thread(target = self.update).start()
 
     def update(self):
-        while 1:
-            if self.last.x != self.rect.x or self.last.y != self.rect.y:
-                try:
-                    with open(self.file, 'r') as f:
-                        lines = f.readlines()[:3]
-                        lines[-1] += '\n'
-                        with open(self.file, 'w') as F:
-                            for i in lines:
-                                F.write(i)
-                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                            F.close()
-                        f.close()
-                except:pass
-                self.last.x = self.rect.x
-                self.last.y = self.rect.y
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()[:3]
+                    lines[-1] += '\n'
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            F.write(i)
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:pass
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
 
 class Movie(pg.sprite.Sprite):
     def __init__(self, m, pos):
@@ -244,24 +238,22 @@ class Movie(pg.sprite.Sprite):
         self.image.blit(img, (1, 1))
         self.last = self.image.get_rect()
         self.file = m
-        Thread(target = self.update).start()
 
     def update(self):
-        while 1:
-            if self.last.x != self.rect.x or self.last.y != self.rect.y:
-                try:
-                    with open(self.file, 'r') as f:
-                        lines = f.readlines()[:1]
-                        lines[-1] += '\n'
-                        with open(self.file, 'w') as F:
-                            for i in lines:
-                                F.write(i)
-                            F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                            F.close()
-                        f.close()
-                except:pass
-                self.last.x = self.rect.x
-                self.last.y = self.rect.y
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()[:1]
+                    lines[-1] += '\n'
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            F.write(i)
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except:pass
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
 
 
 
@@ -412,19 +404,19 @@ class page(QMainWindow, QWidget):
             return
         elif self.d == 't':
             for i in lines[1:-3]:
-                self.gui.add_item(Text(i, (0, 0), file, lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
+                self.gui.add_item(Text(i, (randint(1, 100), randint(1, 100)), file, lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
                 self.gui.update()
         elif self.d == 'i':
-            self.gui.add_item(Image(file, (0, 0), lines[0]))
+            self.gui.add_item(Image(file, (randint(1, 100), randint(1, 100)), lines[0]))
             self.gui.update()
         elif self.d == 'b':
-            self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (0, 0), (70, 40)))
+            self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (randint(1, 100), randint(1, 100)), (70, 40)))
             self.gui.update()
         elif self.d == 'I':
-            self.gui.add_item(Input(file, (0, 0), (300, 40), dictionary[lines[1]]))
+            self.gui.add_item(Input(file, (randint(1, 100), randint(1, 100)), (300, 40), dictionary[lines[1]]))
             self.gui.update()
         elif self.d == 'v':
-            self.gui.add_item(Movie(file, (0, 0)))
+            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100))))
             self.gui.update()
         if self.d != 'p':
             self.w.write(p)
