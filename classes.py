@@ -1,4 +1,4 @@
-
+import pygame as pg
 class GUI:
     def __init__(self):
         self.screen = pg.display.set_mode((1800, 900), pg.RESIZABLE)
