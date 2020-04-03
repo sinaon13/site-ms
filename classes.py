@@ -1,4 +1,7 @@
 import pygame as pg
+from threading import Thread
+import os, sys
+vec = pg.math.Vector2
 class GUI:
     def __init__(self):
         self.screen = pg.display.set_mode((1800, 900), pg.RESIZABLE)
