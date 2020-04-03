@@ -92,7 +92,7 @@ ht.write('''<!DOCTYPE html><html><head>
 for i in scription:
     ht.write('''<script type="text/javascript" src="'''+ i + '''"></script>''')
 ht.write('''
-<title>'''+a+'''</title>
+<title>'''+a.split('\\')[-1][:-5]+'''</title>
 <style>
 ''')
 txt2=[]
@@ -144,6 +144,7 @@ for i in inp:
     position: absolute;
     left : ''' + i[-2] + '''px;
     top : ''' + i[-1] + '''px;
+    border: 2px solid '''+ i[0] + ''' ;
 }''')
     fl+=1
 fl=0
