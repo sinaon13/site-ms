@@ -133,7 +133,6 @@ class page(QMainWindow, QWidget):
         elif self.d == 'p':
             lines[0] += '.site'
         elif self.d == 'v':
-            os.system('move ' + lines[0] + ' ' + self.projection)
             p =lines[0] + '.vid' +'\n'
         for i in range(1, len(lines)):
             if lines[i] == '':
