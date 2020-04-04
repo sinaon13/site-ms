@@ -61,7 +61,7 @@ class GUI:
                             pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
-                        elif(distance.x > chosen.w - 4):
+                        if(distance.x > chosen.w - 4):
                             chosen.w += self.mouse.rect.x - (chosen.rect.x + distance.x)
                             chosen.image = pg.Surface((chosen.w, chosen.h))
                             chosen.image.fill((255, 255, 255))
@@ -71,7 +71,7 @@ class GUI:
                             x, y = chosen.rect.x, chosen.rect.y
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
-                        elif(distance.y < 4):
+                        if(distance.y < 4):
                             chosen.h -= self.mouse.rect.y - (chosen.rect.y + distance.y)
                             chosen.image = pg.Surface((chosen.w, chosen.h))
                             chosen.rect.y = self.mouse.rect.y - distance.y
@@ -82,7 +82,7 @@ class GUI:
                             pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
-                        elif(distance.y > chosen.h - 4):
+                        if(distance.y > chosen.h - 4):
                             chosen.h += self.mouse.rect.y - (chosen.rect.y + distance.y)
                             chosen.image = pg.Surface((chosen.w, chosen.h))
                             chosen.image.fill((255, 255, 255))
