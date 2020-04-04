@@ -2,6 +2,9 @@ import pygame as pg
 from threading import Thread
 import os, sys
 vec = pg.math.Vector2
+class geometric_class(object): # Internal Class
+    def __init__(self):
+        self.geometric = True
 class GUI:
     def __init__(self):
         self.screen = pg.display.set_mode((1800, 900), pg.RESIZABLE)
@@ -18,7 +21,6 @@ class GUI:
         pg.display.flip()
         self.a = Thread(target=(self.events))
         self.a.start()
-
     def events(self):
         distance = vec(0, 0)
         f = False
@@ -43,8 +45,54 @@ class GUI:
             if not r:
                 f = False
             if f:
-                chosen.rect.x = self.mouse.rect.x - distance.x
-                chosen.rect.y = self.mouse.rect.y - distance.y
+                if (distance.x > 4 and distance.x < chosen.w - 4) and (distance.y > 4 and distance.y < chosen.h - 4):
+                    chosen.rect.x = self.mouse.rect.x - distance.x
+                    chosen.rect.y = self.mouse.rect.y - distance.y
+                else:
+                    if(chosen.geometric):
+                        if(distance.x < 4):
+                            chosen.w -= self.mouse.rect.x - (chosen.rect.x + distance.x)
+                            chosen.image = pg.Surface((chosen.w, chosen.h))
+                            chosen.rect.x = self.mouse.rect.x - distance.x
+                            x, y = chosen.rect.x, chosen.rect.y
+                            chosen.image.fill((255, 255, 255))
+                            distance.x = self.mouse.rect.x - chosen.rect.x
+                            distance.y = self.mouse.rect.y - chosen.rect.y
+                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            chosen.rect = chosen.image.get_rect()
+                            chosen.rect.x, chosen.rect.y = x, y
+                        elif(distance.x > chosen.w - 4):
+                            chosen.w += self.mouse.rect.x - (chosen.rect.x + distance.x)
+                            chosen.image = pg.Surface((chosen.w, chosen.h))
+                            chosen.image.fill((255, 255, 255))
+                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            distance.x = self.mouse.rect.x - chosen.rect.x
+                            distance.y = self.mouse.rect.y - chosen.rect.y
+                            x, y = chosen.rect.x, chosen.rect.y
+                            chosen.rect = chosen.image.get_rect()
+                            chosen.rect.x, chosen.rect.y = x, y
+                        elif(distance.y < 4):
+                            chosen.h -= self.mouse.rect.y - (chosen.rect.y + distance.y)
+                            chosen.image = pg.Surface((chosen.w, chosen.h))
+                            chosen.rect.y = self.mouse.rect.y - distance.y
+                            x, y = chosen.rect.x, chosen.rect.y
+                            chosen.image.fill((255, 255, 255))
+                            distance.x = self.mouse.rect.x - chosen.rect.x
+                            distance.y = self.mouse.rect.y - chosen.rect.y
+                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            chosen.rect = chosen.image.get_rect()
+                            chosen.rect.x, chosen.rect.y = x, y
+                        elif(distance.y > chosen.h - 4):
+                            chosen.h += self.mouse.rect.y - (chosen.rect.y + distance.y)
+                            chosen.image = pg.Surface((chosen.w, chosen.h))
+                            chosen.image.fill((255, 255, 255))
+                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            distance.x = self.mouse.rect.x - chosen.rect.x
+                            distance.y = self.mouse.rect.y - chosen.rect.y
+                            x, y = chosen.rect.x, chosen.rect.y
+                            chosen.rect = chosen.image.get_rect()
+                            chosen.rect.x, chosen.rect.y = x, y
+
             self.sprites.update()
             self.update()
 
@@ -61,6 +109,7 @@ class Text(pg.sprite.Sprite):
 
     def __init__(self, text, pos, file, font='arial', size=None, color=None):
         pg.sprite.Sprite.__init__(self)
+        self.geometric = False
         if size:
             if color:
                 f = pg.font.Font(pg.font.match_font(font), size)
@@ -108,6 +157,7 @@ class Image(pg.sprite.Sprite):
 
     def __init__(self, img, pos, file):
         pg.sprite.Sprite.__init__(self)
+        self.geometric = False
         f = pg.image.load(img)
         self.image = pg.Surface(f.get_size())
         self.image.set_colorkey((0, 0, 0))
@@ -138,7 +188,7 @@ class Image(pg.sprite.Sprite):
             self.last.y = self.rect.y
 
 
-class Mouse(pg.sprite.Sprite, pg.Rect):
+class Mouse(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
@@ -148,13 +198,16 @@ class Mouse(pg.sprite.Sprite, pg.Rect):
         self.rect.x = 0
         self.rect.y = 0
 
-class Button(pg.sprite.Sprite):
+class Button(pg.sprite.Sprite, geometric_class):
     def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14):
         font = pg.font.Font(pg.font.match_font(font), font_size)
+        geometric_class.__init__(self)
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface(size)
         self.w, self.h = size
         self.image.fill(color)
+        self.color = color
+        pg.draw.rect(self.image, (0, 0, 0), (0, 0, self.w, self.h), 5)
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
         txt = font.render(text, True, (255, 255, 255))
@@ -181,6 +234,7 @@ class Button(pg.sprite.Sprite):
                                 x = i
                             F.write(x)
                             F.write('\n')
+                        F.write(str(int(self.w)) + ' ' + str(int(self.h)) + '\n')
                         F.write(str(self.rect.x) + ' ' + str(self.rect.y))
                         F.close()
                     f.close()
@@ -189,14 +243,17 @@ class Button(pg.sprite.Sprite):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
-class Input(pg.sprite.Sprite):
+class Input(pg.sprite.Sprite, geometric_class):
     def __init__(self, path, pos, size, color):
         pg.sprite.Sprite.__init__(self)
+        self.w, self.h = size
+        geometric_class.__init__(self)
         self.image = pg.Surface(size)
         self.image.fill((255, 255, 255))
         data = [0] * 4
         data[2], data[3] = size
-        pg.draw.rect(self.image, color, data, 5)
+        self.color = color
+        pg.draw.rect(self.image, self.color, data, 5)
         self.rect = self.image.get_rect()
         self.last = self.image.get_rect()
         self.rect.x, self.rect.y = pos
@@ -213,6 +270,7 @@ class Input(pg.sprite.Sprite):
                     with open(self.file, 'w') as F:
                         for i in lines:
                             F.write(i)
+                        F.write(str(int(self.w)) + ' ' + str(int(self.h)) + '\n')
                         F.write(str(self.rect.x) + ' ' + str(self.rect.y))
                         F.close()
                     f.close()
@@ -220,16 +278,18 @@ class Input(pg.sprite.Sprite):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
-class Movie(pg.sprite.Sprite):
+class Movie(pg.sprite.Sprite, geometric_class):
     def __init__(self, m, pos):
         pg.sprite.Sprite.__init__(self)
+        self.w = 300
+        self.h = 200
+        geometric_class.__init__(self)
         self.image = pg.Surface((300, 200))
-        self.image.fill((100, 100, 100))
+        self.image.fill((255, 255, 255))
+        self.color = (100, 100, 100)
+        pg.draw.rect(self.image, self.color, (0, 0, self.w, self.h), 5)
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
-        img = pg.Surface((298, 198))
-        img.fill((255, 255, 255))
-        self.image.blit(img, (1, 1))
         self.last = self.image.get_rect()
         self.file = m
 
@@ -242,6 +302,7 @@ class Movie(pg.sprite.Sprite):
                     with open(self.file, 'w') as F:
                         for i in lines:
                             F.write(i)
+                        F.write(str(int(self.w)) + ' ' + str(int(self.h)) + '\n')
                         F.write(str(self.rect.x) + ' ' + str(self.rect.y))
                         F.close()
                     f.close()

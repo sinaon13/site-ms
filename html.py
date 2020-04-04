@@ -67,6 +67,7 @@ print(btn)
 print(img)
 print(txt)
 print(video)
+print(inp)
 scription = []
 for i in btn:
     if i[-5][-4:-1] == '.js':
@@ -131,9 +132,9 @@ for i in btn:
     position: absolute;
     left : ''' + str(int(i[-2]))  + '''px;
     top : ''' + str(int(i[-1])) + '''px;
-    background-color : ''' + i[-6] + ''';
-    width: 70px;
-    height: 40px;
+    background-color : ''' + i[-8] + ''';
+    width: '''+ i[-3].split()[0] +'''px;
+    height: '''+ i[-3].split()[-1] +'''px;
     border: 2px solid black;
 }''')
     fl += 1
@@ -144,6 +145,8 @@ for i in inp:
     position: absolute;
     left : ''' + i[-2] + '''px;
     top : ''' + i[-1] + '''px;
+    width:''' + i[-3].split()[0]+ '''px;
+    height: '''+ i[-3].split()[-1] + '''px;
     border: 2px solid '''+ i[0] + ''' ;
 }''')
     fl+=1
@@ -152,8 +155,10 @@ for i in video:
     vid2.append('vid' + str(fl))
     ht.write('.vid'+str(fl) + '''{
     position: absolute;
-    left:'''+i[1]+'''px;
-    top:'''+ i[2]+'''px;
+    left:'''+i[2]+'''px;
+    top:'''+ i[3]+'''px;
+    width:''' + i[1].split()[0] +'''px;
+    height:''' + i[1].split()[0] +'''px;
 }''')
 ht.write('''</style>
 </head>
@@ -169,14 +174,14 @@ for i in range(len(img2)):
 
 for i in range(len(btn2)):
     clas='class="'+btn2[i]+'"'
-    ht.write('<button '+clas+' onclick = "' + btn[i][-4].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
+    ht.write('<button '+clas+' onclick = "' + btn[i][-7].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
 
 for i in range(len(inp2)):
     clas='class="'+inp2[i]+'"'
-    ht.write('<input '+clas+' type = "' + inp[i][-4][:-1] + '">')
+    ht.write('<input '+clas+' type = "' + inp[i][-5][:-1] + '">')
 for i in range(len(vid2)):
     clas='class="'+vid2[i]+'"'
-    ht.write('''<video '''+clas+''' width = 300 height = 200 controls>
+    ht.write('''<video '''+clas+''' controls>
     <source src="'''+videoname[i]+'''" type="video/''' + videoname[i].split('.')[-1] +'''">
     </video>
     ''')
