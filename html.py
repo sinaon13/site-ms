@@ -128,13 +128,15 @@ for i in img:
 fl = 0
 for i in btn:
     btn2.append('b' + str(fl))
+    w = i[-3].split()[0]
+    h = i[-3].split()[-1]
     ht.write('.b' + str(fl) + '''{
     position: absolute;
     left : ''' + str(int(i[-2]))  + '''px;
     top : ''' + str(int(i[-1])) + '''px;
-    background-color : ''' + i[-8] + ''';
-    width: '''+ i[-3].split()[0] +'''px;
-    height: '''+ i[-3].split()[-1] +'''px;
+    background-color : ''' + i[-7] + ''';
+    width: '''+ w +'''px;
+    height: '''+ h +'''px;
     border: 2px solid black;
 }''')
     fl += 1
