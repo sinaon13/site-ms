@@ -45,11 +45,11 @@ class GUI:
             if not r:
                 f = False
             if f:
-                if (distance.x > 4 and distance.x < chosen.w - 4) and (distance.y > 4 and distance.y < chosen.h - 4):
-                    chosen.rect.x = self.mouse.rect.x - distance.x
-                    chosen.rect.y = self.mouse.rect.y - distance.y
-                else:
-                    if(chosen.geometric):
+                if(chosen.geometric):
+                    if (distance.x > 4 and distance.x < chosen.w - 4) and (distance.y > 4 and distance.y < chosen.h - 4):
+                        chosen.rect.x = self.mouse.rect.x - distance.x
+                        chosen.rect.y = self.mouse.rect.y - distance.y
+                    else:
                         if(distance.x < 4):
                             chosen.w -= self.mouse.rect.x - (chosen.rect.x + distance.x)
                             chosen.image = pg.Surface((chosen.w, chosen.h))
@@ -92,6 +92,9 @@ class GUI:
                             x, y = chosen.rect.x, chosen.rect.y
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
+                else:
+                    chosen.rect.x = self.mouse.rect.x - distance.x
+                    chosen.rect.y = self.mouse.rect.y - distance.y
 
             self.sprites.update()
             self.update()
@@ -106,27 +109,29 @@ class GUI:
 
 
 class Text(pg.sprite.Sprite):
-
-    def __init__(self, text, pos, file, font='arial', size=None, color=None):
+    def __init__(self, text, pos, file, font='arial', size=20, color=(0, 0, 0)):
         pg.sprite.Sprite.__init__(self)
         self.geometric = False
-        if size:
-            if color:
-                f = pg.font.Font(pg.font.match_font(font), size)
-                txt = f.render(text, True, color)
-                self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.blit(txt, (0, 0))
-                self.image.set_colorkey((0, 0, 0))
-            else:
-                f = pg.font.Font('arial', 20)
-                txt = f.render(text, True, (0, 0, 0))
-                self.image = pg.Surface((txt.get_width(), txt.get_height()))
-                self.image.blit(txt, (0, 0))
-                self.image.set_colorkey((0, 0, 0))
-            self.rect = self.image.get_rect()
-            self.rect.x, self.rect.y = pos
-            self.file = file
-            self.last = self.image.get_rect()
+        self.sheets = len(text)
+        f = pg.font.Font(pg.font.match_font(font), size)
+        letter = f.render('g', True, color).get_height()
+        x = f.render('g', True, color).get_width()
+        index = letter * len(text)
+        m = 0
+        for i in text:
+            m = max(len(i), m)
+
+        self.image = pg.Surface((m * x, index))
+        index = 0
+        for i in text:
+            txt = f.render(i, True, color)
+            self.image.blit(txt, (0, txt.get_height() * index))
+            index += 1;
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = pos
+        self.file = file
+        self.last = self.image.get_rect()
 
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
@@ -134,7 +139,7 @@ class Text(pg.sprite.Sprite):
                 with open(self.file, 'r') as f:
                     lines = f.readlines()
                     if len(lines) > 5:
-                        lines = lines[:5]
+                        lines = lines[:4 + self.sheets]
                     with open(self.file, 'w') as F:
                         for i in lines:
                             if i != lines[-1]:

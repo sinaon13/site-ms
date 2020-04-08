@@ -134,6 +134,17 @@ class page(QMainWindow, QWidget):
             lines[0] += '.site'
         elif self.d == 'v':
             p =lines[0] + '.vid' +'\n'
+        try:
+            color = lines[-1]
+            size = lines[-2]
+            font = lines[-3]
+            txt = lines[1:-3]
+            if lines[-1] == "default":
+                color = 'black'
+                font = 'arial'
+                size = '20'
+                txt = lines[1:-1]
+        except:pass
         for i in range(1, len(lines)):
             if lines[i] == '':
                 continue
@@ -143,7 +154,12 @@ class page(QMainWindow, QWidget):
                     if i != len(lines) - 1:
                         p += '\n'
                     continue
-            p += lines[i]
+            if lines[i] == 'default':
+                p += font + '\n'
+                p += size + '\n'
+                p += color
+            else:
+                p += lines[i]
             if i != len(lines) - 1:
                 p += '\n'
         if self.d == 'p':
@@ -151,9 +167,8 @@ class page(QMainWindow, QWidget):
             os.mkdir(lines[0])
             return
         elif self.d == 't':
-            for i in lines[1:-3]:
-                self.gui.add_item(Text(i, (randint(1, 100), randint(1, 100)), file, lines[(-3)], int(lines[(-2)]), dictionary[lines[(-1)]]))
-                self.gui.update()
+            self.gui.add_item(Text(txt, (randint(1, 100), randint(1, 100)), file, font, int(size), dictionary[color]))
+            self.gui.update()
         elif self.d == 'i':
             self.gui.add_item(Image(file, (randint(1, 100), randint(1, 100)), lines[0]))
             self.gui.update()

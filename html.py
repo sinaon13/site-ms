@@ -168,7 +168,10 @@ ht.write('''</style>
 ''')
 for i in range(len(txt2)):
     clas='class="'+txt2[i]+'"'
-    ht.write('<p '+clas+'>'+txt[i][0][:-1]+'</p>')
+    ht.write('<p '+clas+'>')
+    for j in txt[i][:-6]:
+        ht.write(j)
+    ht.write('</p>')
 
 for i in range(len(img2)):
     clas='class="'+img2[i]+'"'
