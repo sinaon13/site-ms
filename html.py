@@ -171,6 +171,7 @@ for i in range(len(txt2)):
     ht.write('<p '+clas+'>')
     for j in txt[i][:-6]:
         ht.write(j)
+        ht.write('<br>')
     ht.write('</p>')
 
 for i in range(len(img2)):

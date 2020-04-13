@@ -122,12 +122,13 @@ class Text(pg.sprite.Sprite):
             m = max(len(i), m)
 
         self.image = pg.Surface((m * x, index))
+        self.image.fill((255, 255, 255))
         index = 0
         for i in text:
             txt = f.render(i, True, color)
             self.image.blit(txt, (0, txt.get_height() * index))
             index += 1;
-        self.image.set_colorkey((0, 0, 0))
+        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
         self.file = file
