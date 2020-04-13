@@ -134,7 +134,8 @@ for i in btn:
     position: absolute;
     left : ''' + str(int(i[-2]))  + '''px;
     top : ''' + str(int(i[-1])) + '''px;
-    background-color : ''' + i[-7] + ''';
+    background-color : ''' + i[-8] + ''';
+    ''' + i[-5][:-1] + '''px;
     width: '''+ w +'''px;
     height: '''+ h +'''px;
     border: 2px solid black;
@@ -145,6 +146,7 @@ for i in inp:
     inp2.append('in' + str(fl))
     ht.write('.in' + str(fl) + '''{
     position: absolute;
+    '''+ i[-5][:-1]+'''px;
     left : ''' + i[-2] + '''px;
     top : ''' + i[-1] + '''px;
     width:''' + i[-3].split()[0]+ '''px;

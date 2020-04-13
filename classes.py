@@ -52,44 +52,56 @@ class GUI:
                     else:
                         if(distance.x < 4):
                             chosen.w -= self.mouse.rect.x - (chosen.rect.x + distance.x)
-                            chosen.image = pg.Surface((chosen.w, chosen.h))
                             chosen.rect.x = self.mouse.rect.x - distance.x
                             x, y = chosen.rect.x, chosen.rect.y
-                            chosen.image.fill((255, 255, 255))
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
-                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            if chosen.type == 'button':
+                                chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
+                            elif chosen.type == 'input':
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
+                            else:
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.x > chosen.w - 4):
                             chosen.w += self.mouse.rect.x - (chosen.rect.x + distance.x)
-                            chosen.image = pg.Surface((chosen.w, chosen.h))
-                            chosen.image.fill((255, 255, 255))
-                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
+                            if chosen.type == 'button':
+                                chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
+                            elif chosen.type == 'input':
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
+                            else:
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
                             x, y = chosen.rect.x, chosen.rect.y
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.y < 4):
                             chosen.h -= self.mouse.rect.y - (chosen.rect.y + distance.y)
-                            chosen.image = pg.Surface((chosen.w, chosen.h))
                             chosen.rect.y = self.mouse.rect.y - distance.y
                             x, y = chosen.rect.x, chosen.rect.y
-                            chosen.image.fill((255, 255, 255))
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
-                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            if chosen.type == 'button':
+                                chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
+                            elif chosen.type == 'input':
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
+                            else:
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.y > chosen.h - 4):
                             chosen.h += self.mouse.rect.y - (chosen.rect.y + distance.y)
-                            chosen.image = pg.Surface((chosen.w, chosen.h))
-                            chosen.image.fill((255, 255, 255))
-                            pg.draw.rect(chosen.image, chosen.color, (0, 0, chosen.w, chosen.h), 5)
+                            x, y = chosen.rect.x, chosen.rect.y
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
-                            x, y = chosen.rect.x, chosen.rect.y
+                            if chosen.type == 'button':
+                                chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
+                            elif chosen.type == 'input':
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
+                            else:
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                 else:
@@ -205,15 +217,36 @@ class Mouse(pg.sprite.Sprite):
         self.rect.y = 0
 
 class Button(pg.sprite.Sprite, geometric_class):
-    def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14):
+    def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14, border_radius = 0):
+        self.type = 'button'
         font = pg.font.Font(pg.font.match_font(font), font_size)
         geometric_class.__init__(self)
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface(size)
         self.w, self.h = size
-        self.image.fill(color)
+        self.border_radius = border_radius
+        self.text = text
         self.color = color
-        pg.draw.rect(self.image, (0, 0, 0), (0, 0, self.w, self.h), 5)
+
+        if self.border_radius > 0:
+            self.image.set_colorkey((0, 0, 0))
+            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.rect(self.image, self.color, (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
+            pg.draw.rect(self.image, self.color, (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
+            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, 1), (self.w - self.border_radius, 1), 3);
+            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 3);
+            pg.draw.line(self.image, (1, 1, 1), (1, self.border_radius), (1, self.h - self.border_radius), 3);
+            pg.draw.line(self.image, (1, 1, 1), (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 3);
+        else:
+            self.image.fill(color)
+            pg.draw.rect(self.image, (0, 0, 0), (0, 0, self.w, self.h), 5)
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
         txt = font.render(text, True, (255, 255, 255))
@@ -230,8 +263,8 @@ class Button(pg.sprite.Sprite, geometric_class):
             try:
                 with open(self.file, 'r') as f:
                     lines = f.readlines()
-                    if len(lines) > 4:
-                        lines = lines[:4]
+                    if len(lines) > 5:
+                        lines = lines[:5]
                     with open(self.file, 'w') as F:
                         for i in lines:
                             if i != lines[-1]:
@@ -250,16 +283,35 @@ class Button(pg.sprite.Sprite, geometric_class):
             self.last.y = self.rect.y
 
 class Input(pg.sprite.Sprite, geometric_class):
-    def __init__(self, path, pos, size, color):
+    def __init__(self, path, pos, size, color, border_radius = 0):
+        self.type = 'input'
         pg.sprite.Sprite.__init__(self)
         self.w, self.h = size
         geometric_class.__init__(self)
         self.image = pg.Surface(size)
-        self.image.fill((255, 255, 255))
-        data = [0] * 4
-        data[2], data[3] = size
         self.color = color
-        pg.draw.rect(self.image, self.color, data, 5)
+        self.border_radius = border_radius
+        if self.border_radius > 0:
+            self.image.set_colorkey((0, 0, 0))
+            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.rect(self.image, self.color, (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
+            pg.draw.rect(self.image, self.color, (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
+            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, 2), (self.w - self.border_radius, 2), 5);
+            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 5);
+            pg.draw.line(self.image, (1, 1, 1), (2, self.border_radius), (2, self.h - self.border_radius), 5);
+            pg.draw.line(self.image, (1, 1, 1), (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 5);
+        else:
+            self.image.fill((255, 255, 255))
+            data = [0] * 4
+            data[2], data[3] = size
+            pg.draw.rect(self.image, self.color, data, 5)
         self.rect = self.image.get_rect()
         self.last = self.image.get_rect()
         self.rect.x, self.rect.y = pos
@@ -271,7 +323,7 @@ class Input(pg.sprite.Sprite, geometric_class):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
                 with open(self.file, 'r') as f:
-                    lines = f.readlines()[:3]
+                    lines = f.readlines()[:4]
                     lines[-1] += '\n'
                     with open(self.file, 'w') as F:
                         for i in lines:
@@ -285,12 +337,12 @@ class Input(pg.sprite.Sprite, geometric_class):
             self.last.y = self.rect.y
 
 class Movie(pg.sprite.Sprite, geometric_class):
-    def __init__(self, m, pos):
+    def __init__(self, m, pos, size, border_radius):
+        self.type = 'movie'
         pg.sprite.Sprite.__init__(self)
-        self.w = 300
-        self.h = 200
+        self.w, self.h = size
         geometric_class.__init__(self)
-        self.image = pg.Surface((300, 200))
+        self.image = pg.Surface((self.w, self.h))
         self.image.fill((255, 255, 255))
         self.color = (100, 100, 100)
         pg.draw.rect(self.image, self.color, (0, 0, self.w, self.h), 5)

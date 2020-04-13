@@ -117,6 +117,7 @@ class page(QMainWindow, QWidget):
             block = block.next()
             lines.append(block.text())
         if self.d != 'p':
+            border_radius = 0
             if self.projection != '':
                 file = os.path.join(self.projection ,lines[0]) + '.txt'
                 self.w = open(file, 'w')
@@ -134,6 +135,7 @@ class page(QMainWindow, QWidget):
             lines[0] += '.site'
         elif self.d == 'v':
             p =lines[0] + '.vid' +'\n'
+        else:pass
         try:
             color = lines[-1]
             size = lines[-2]
@@ -154,6 +156,8 @@ class page(QMainWindow, QWidget):
                     if i != len(lines) - 1:
                         p += '\n'
                     continue
+            if 'border_radius' in lines[i]:
+                border_radius = int(lines[i].split(':')[-1])
             if lines[i] == 'default':
                 p += font + '\n'
                 p += size + '\n'
@@ -173,13 +177,15 @@ class page(QMainWindow, QWidget):
             self.gui.add_item(Image(file, (randint(1, 100), randint(1, 100)), lines[0]))
             self.gui.update()
         elif self.d == 'b':
-            self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (randint(1, 100), randint(1, 100)), (70, 40)))
+            self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (randint(1, 100), randint(1, 100)), (70, 40), border_radius = border_radius))
             self.gui.update()
+            p += 'border-radius:'+str(border_radius) + '\n'
         elif self.d == 'I':
-            self.gui.add_item(Input(file, (randint(1, 100), randint(1, 100)), (300, 40), dictionary[lines[1]]))
+            self.gui.add_item(Input(file, (randint(1, 100), randint(1, 100)), (300, 40), dictionary[lines[1]], border_radius))
             self.gui.update()
+            p += 'border-radius:'+str(border_radius)+ '\n'
         elif self.d == 'v':
-            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100))))
+            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), border_radius))
             self.gui.update()
         if self.d != 'p':
             self.w.write(p)
