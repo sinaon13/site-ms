@@ -19,12 +19,15 @@ class GUI:
         self.mouse = Mouse()
         self.screen.fill((255, 255, 255))
         pg.display.flip()
+        self.clock = pg.time.Clock()
         self.a = Thread(target=(self.events))
         self.a.start()
     def events(self):
         distance = vec(0, 0)
         f = False
         chosen = None
+        writing = None
+        shifting = 0
         while 1:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -33,10 +36,62 @@ class GUI:
                     sys.exit()
                 if event.type == pg.MOUSEMOTION:
                     self.mouse.rect.x , self.mouse.rect.y = event.pos
+
+                if writing:
+                    if event.type == pg.KEYDOWN:
+                        text = writing.text
+                        if 96 < event.key < 123:
+                            text = text[:writing.pointer] + chr(event.key - shifting) + text[writing.pointer:]
+                            writing.pointer += 1
+
+                        if event.key == pg.K_BACKSPACE:
+                            txt = ''
+                            try:
+                                writing.pointer -= 1
+                                txt = text[:writing.pointer] + text[writing.pointer + 1:]
+                            except :pass
+                            text = txt
+                        b = Box(text, (writing.rect.x, writing.rect.y))
+                        chosen.boxes[writing.indexing[0]][writing.indexing[1]] = b
+                        b.rect.x, b.rect.y = writing.rect.x, writing.rect.y
+                        b.indexing = writing.indexing
+                        b.pointer = writing.pointer
+                        b.ind = writing.ind
+                        writing = b
+
+                        if event.key == pg.K_RSHIFT or event.key == pg.K_LSHIFT:
+                            shifting = 32
+                        if event.key == pg.K_RIGHT:
+                            writing.pointer += 1
+                        if event.key == pg.K_LEFT:
+                            writing.pointer -= 1
+                    if event.type == pg.KEYUP:
+                        if event.key == pg.K_RSHIFT or event.key == pg.K_LSHIFT:
+                            shifting = 0
+            if writing:
+                writing.update()
             mouse = pg.mouse.get_pressed()
             r, m, l = mouse
             if r and not f:
+                writing = None
                 hits = pg.sprite.spritecollide(self.mouse, self.sprites, False)
+                if hits:
+                    for hit in hits:
+                        if "boxes" in dir(hit):
+                            chosen = hits[0]
+                            for i in chosen.boxes:
+                                for j in i:
+                                    j.set_text(j.text, j.f)
+                                    j.rect.x, j.rect.y = j.rect.x + chosen.rect.x ,j.rect.y + chosen.rect.y
+                                    j.pointer = len(j.text)
+                                h = pg.sprite.spritecollide(self.mouse, i, False)
+                                for j in i:
+                                    j.rect.x, j.rect.y = j.rect.x - chosen.rect.x ,j.rect.y - chosen.rect.y
+                                if h:
+                                    writing = h[0]
+                                continue
+                            if writing:
+                                continue
                 if hits:
                     distance.x = self.mouse.rect.x - hits[0].rect.x
                     distance.y = self.mouse.rect.y - hits[0].rect.y
@@ -205,7 +260,6 @@ class Image(pg.sprite.Sprite):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
-
 class Mouse(pg.sprite.Sprite):
 
     def __init__(self):
@@ -368,7 +422,156 @@ class Movie(pg.sprite.Sprite, geometric_class):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+class Box(pg.sprite.Sprite):
+    def __init__(self, text, pos):
+        pg.sprite.Sprite.__init__(self)
+        self.writable = True
+        self.selection = False
+        self.f = pg.font.Font(pg.font.match_font("arial"), 20, bold = True)
+        self.text = text
+        self.pointer = len(self.text)
+        self.txt = self.f.render(text, True, (0, 0, 0))
+        self.image = pg.Surface((self.txt.get_width()+10, self.txt.get_height()))
+        self.image.fill((255, 255, 255))
+        self.set_text(text, self.f)
+        self.rect = self.image.get_rect()
+        self.rect.x , self.rect.y = pos
+        self.rect.x += 10
+        seff.rect.y += 10
+        self.indexing = [0, 0]
+        self.ind = 0
+    def set_text(self, text, font):
+        self.text = text
+        self.txt = font.render(text, True, (0, 0, 0))
+        self.image.blit(self.txt, (0, 0))
+        self.image.set_colorkey((255, 255, 255))
+    def update(self):
+        self.image.fill((255, 255, 255))
+        self.txt = self.f.render(self.text, True, (0, 0, 0))
+        self.image.blit(self.txt, (0, 0))
+        t = self.f.render(self.text[:self.pointer], True, (0, 0, 0))
+        self.image.set_colorkey((255, 255, 255))
+        pg.draw.line(self.image, (0, 0, 0), (t.get_width(), 0), (t.get_width(), self.image.get_height()),1)
 
 
+
+class Table(pg.sprite.Sprite):
+    def __init__(self, pos, size, heads, file):
+        pg.sprite.Sprite.__init__(self)
+        self.heads = heads
+        self.geometric = False
+        self.size = size
+        self.boxes = self.init_table(len(self.heads), size)
+        self.image = pg.Surface((self.max * (len(self.boxes[0])), self.high * (len(self.boxes) + 1)))
+        self.image.fill((255, 255, 255))
+        pg.draw.line(self.image, (0, 0, 0), (0, 0), (0, self.image.get_height()))
+        for i in range(1, len(self.boxes[0]) + 1):
+            pg.draw.line(self.image, (0, 0, 0), (self.image.get_width() // (len(self.boxes[0])) * i, 0), (self.image.get_width() // (len(self.boxes[0])) * i,self.image.get_height()), 3)
+        pg.draw.line(self.image, (0, 0, 0), (0, 0), (self.image.get_width(), 0))
+        for i in range(1,(len(self.boxes) + 2)):
+            pg.draw.line(self.image, (0, 0, 0), (0, self.image.get_height() // (len(self.boxes) + 1) * i), (self.image.get_width(), self.image.get_height() // (len(self.boxes) + 1) * i), 3)
+        position = [self.image.get_width() // (len(self.boxes[0])), self.image.get_height() // (len(self.boxes) + 1)]
+        column = 0
+        for text in self.heads:
+            i = Box(text, (0, 0))
+            i.rect.x, i.rect.y = position[0] * column + 5, 5
+            self.image.blit(i.image, i.rect)
+            column += 1
+        column = 0
+        for text in self.boxes:
+            sheet = 0
+            for i in text:
+                i.rect.x, i.rect.y= position[0] * sheet, position[1] * column + 1
+                self.image.blit(i.image, i.rect)
+                sheet += 1
+            column += 1
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = pos
+        self.last = self.image.get_rect()
+
+        self.file = file
+
+
+    def init_table(self, x, y):
+        l = []
+        self.max = 0
+        self.high = 0
+        for i in self.heads:
+            b = Box(i, (0, 0))
+            self.max = max(self.max, b.txt.get_width() + 20)
+        self.high = b.txt.get_width() + 10
+        for i in range(y):
+            a = []
+            for j in range(x):
+                b = Box('', (0, 0))
+                b.indexing = [i, j]
+                self.max = max(self.max, b.txt.get_width() + 20)
+                a.append(b)
+            l.append(a)
+        return l;
+    def get_geo(self, x, y):
+        self.max = 0
+        for i in self.heads:
+            b = Box(i, (0, 0))
+            self.max = max(self.max, b.txt.get_width() + 20)
+        for i in range(y):
+            for j in range(x):
+                self.max = max(self.max, self.boxes[i][j].txt.get_width() + 20)
+    def update(self):
+        if self.last.x != self.rect.x or self.last.y != self.rect.y:
+            try:
+                with open(self.file, 'r') as f:
+                    lines = f.readlines()[:4 + len(self.heads)]
+                    lines.append('\n')
+                    with open(self.file, 'w') as F:
+                        for i in lines:
+                            F.write(i)
+                        print(self.rect)
+                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                        F.close()
+                    f.close()
+            except :pass
+            self.last.x = self.rect.x
+            self.last.y = self.rect.y
+        try:
+            with open(self.file[:-4] + '.tab.data', 'w') as f:
+                for i in self.boxes:
+                    for j in i[:-1]:
+                        if j.text != '':
+                            f.write(j.text + ' ')
+                        else:
+                            f.write('* ')
+                    if i[-1].text != '':
+                        f.write(i[-1].text + '\n')
+                    else:
+                        f.write('*\n')
+                f.close()
+        except:pass
+        self.get_geo(len(self.boxes[0]), len(self.boxes))
+        self.image = pg.Surface((self.max * (len(self.boxes[0])), self.high * (len(self.boxes) + 1)))
+        self.image.fill((255, 255, 255))
+        pg.draw.line(self.image, (0, 0, 0), (0, 0), (0, self.image.get_height()))
+        for i in range(1, len(self.boxes[0]) + 1):
+            pg.draw.line(self.image, (0, 0, 0), (self.image.get_width() // (len(self.boxes[0])) * i, 0), (self.image.get_width() // (len(self.boxes[0])) * i,self.image.get_height()), 3)
+        pg.draw.line(self.image, (0, 0, 0), (0, 0), (self.image.get_width(), 0))
+        for i in range(1,(len(self.boxes) + 2)):
+            pg.draw.line(self.image, (0, 0, 0), (0, self.image.get_height() // (len(self.boxes) + 1) * i), (self.image.get_width(), self.image.get_height() // (len(self.boxes) + 1) * i), 3)
+        position = [self.image.get_width() // (len(self.boxes[0])), self.image.get_height() // (len(self.boxes) + 1)]
+        column = 0
+        for text in self.heads:
+            i = Box(text, (0, 0))
+            i.rect.x, i.rect.y = position[0] * column + 5, 5
+            self.image.blit(i.image, i.rect)
+            column += 1
+        column = 1
+        for text in self.boxes:
+            sheet = 0
+            for i in text:
+                i.rect.x, i.rect.y= position[0] * sheet, position[1] * column + 1
+                self.image.blit(i.image, i.rect)
+                sheet += 1
+            column += 1
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = self.last.x, self.last.y
 dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}

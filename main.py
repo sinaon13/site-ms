@@ -90,6 +90,13 @@ class page(QMainWindow, QWidget):
         self.setCentralWidget(self.textedit)
         self.d = 'v'
 
+
+    def table(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d = 'ta'
+
+
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
@@ -135,6 +142,8 @@ class page(QMainWindow, QWidget):
             lines[0] += '.site'
         elif self.d == 'v':
             p =lines[0] + '.vid' +'\n'
+        elif self.d == 'ta':
+            p = lines[0] + '.tab'+'\n'
         else:pass
         try:
             color = lines[-1]
@@ -187,6 +196,9 @@ class page(QMainWindow, QWidget):
         elif self.d == 'v':
             self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), border_radius))
             self.gui.update()
+        elif self.d == 'ta':
+            self.gui.add_item(Table((randint(1, 100), randint(1, 100)) , int(lines[-1]), lines[2:-2], file))
+            self.gui.update()
         if self.d != 'p':
             self.w.write(p)
             self.w.close()
@@ -229,6 +241,9 @@ class page(QMainWindow, QWidget):
         button = QAction(QIcon('./icons/button.png'), 'button', self)
         button.setStatusTip('Add Button')
         button.triggered.connect(self.button)
+        table=QAction(QIcon('./icons/table.png'), 'table', self)
+        table.setStatusTip('Add Table')
+        table.triggered.connect(self.table)
         save = QAction(QIcon('./icons/save.png'), 'save', self)
         save.setStatusTip('Save')
         save.triggered.connect(self.done)
@@ -252,6 +267,7 @@ class page(QMainWindow, QWidget):
         toolbar.addAction(hasan)
         toolbar.addAction(vid)
         toolbar.addAction(button)
+        toolbar.addAction(table)
         toolbar.addAction(inp)
         toolbar.addAction(save)
         toolbar.addAction(delete)
@@ -274,7 +290,6 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'I'
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

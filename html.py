@@ -15,6 +15,8 @@ txt=[]
 btn = []
 inp = []
 video=[]
+tab=[]
+data = []
 videoname = []
 for file in glob.glob("*.txt"):
     if ".png" in file:
@@ -54,6 +56,16 @@ for file in glob.glob("*.txt"):
         video.append(r[1:-1] + r[-1].split())
         videoname.append(r[0][:-5])
 
+
+for file in glob.glob("*.txt"):
+    if ".png" in file:
+        continue
+    r=open(file,'r').readlines()
+    if r[0][-5:][:-1] == '.tab' :
+        tab.append(r[1:-1] + r[-1].split())
+        data.append(r[0][:-1] + '.data')
+
+
 img = []
 for i in im:
     q = []
@@ -67,6 +79,7 @@ print(btn)
 print(img)
 print(txt)
 print(video)
+print(tab)
 print(inp)
 scription = []
 for i in btn:
@@ -76,6 +89,7 @@ for i in btn:
 btn2 = []
 inp2 = []
 vid2=[]
+tab2=[]
 print(scription)
 ##for i in range(len(txt)):
 ##    for g in range(len(txt[i])):
@@ -142,6 +156,17 @@ for i in btn:
 }''')
     fl += 1
 fl = 0
+
+
+##for i in range(0,len(tab),2):
+##    if i<len(tab):
+##        tab2.append('tab'+str(fl))
+##        ht.write('.tab' + str(fl) + '''{
+##        position: absolute;
+##        width:''' + tab[i][-2] + '''px;
+##        height: ''' + tab[i][-1] + ''' px;\n''')
+##        fl+=1
+fl=0
 for i in inp:
     inp2.append('in' + str(fl))
     ht.write('.in' + str(fl) + '''{
@@ -155,6 +180,23 @@ for i in inp:
 }''')
     fl+=1
 fl=0
+for i in tab:
+    ht.write('''\ntable {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      position:absolute;
+      top:''' + i[-2] + '''px;
+      left:''' + i[-1] + '''px;
+      border-color:black;
+    }
+    td, th {
+      border: 1px solid;
+      text-align: left;
+      padding: 8px;
+    }
+    ''')
+    fl+= 1
+fl = 0
 for i in video:
     vid2.append('vid' + str(fl))
     ht.write('.vid'+str(fl) + '''{
@@ -193,6 +235,33 @@ for i in range(len(vid2)):
     <source src="'''+videoname[i]+'''" type="video/''' + videoname[i].split('.')[-1] +'''">
     </video>
     ''')
+sf=-1
+for i in range(len(tab)):
+    if not len(tab[i]):break
+    ht.write('''<table >\n''')
+    ht.write('<tr>\n')
+    x = 0
+    f = False
+    for j in range(len(tab[i])):
+        if '-th' in tab[i][j]:
+            break
+        if f:
+            ht.write('<th>' + tab[i][j][:-1] + '</th>\n')
+            x+=1
+        if 'th-' in tab[i][j]:
+            f = True
+    ht.write('</tr>\n')
+    with open(data[i], 'r') as f:
+        l = f.readlines()
+        for j in range(int(tab[i][-4])):
+            ht.write('<tr>\n')
+            d = l[j].split('\n')[0]
+            for p in range(x):
+                ht.write('<td>'+ d.split()[p] +'</td>\n')
+            ht.write('</tr>\n')
+        f.close()
+
+    ht.write('</table>\n')
 ht.write('''</body>
 </html>''')
 ht.close()
