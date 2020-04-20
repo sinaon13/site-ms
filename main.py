@@ -192,7 +192,14 @@ class page(QMainWindow, QWidget):
                     p += '\n'
         if self.d == 'p':
             self.projection = lines[0]
-            os.mkdir(lines[0])
+            try:
+                os.mkdir(lines[0])
+            except:
+                reply = QMessageBox.question(self, 'Folder Found', 'This project is already exist. Do you want to replace it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    event.accept()
+                    for i in os.listdir(lines[0]):
+                        os.remove(i)
             return
         elif self.d == 't':
             self.gui.add_item(Text(txt, (randint(1, 100), randint(1, 100)), file, font, int(size), dictionary[color]))
@@ -219,16 +226,7 @@ class page(QMainWindow, QWidget):
             self.w.close()
 
     def load(self):
-        menu = self.menuBar()
-        menubar = menu.addMenu('loaded')
-        self.files = []
-        self.fl = []
-        for self.file in glob.glob('*.txt'):
-            self.files.append(self.file)
-            self.option = QAction(self.file, self)
-            self.fl.append(self.option)
-            self.option.triggered.connect(self.loading)
-            menubar.addAction(self.option)
+        file = str(QFileDialog.getExistingDirectory(self, "Select project .site"))
 
     def create(self):
         self.textedit = QTextEdit(self)
