@@ -110,8 +110,13 @@ class page(QMainWindow, QWidget):
             for i in range(1, doc.blockCount()):
                 block = block.next()
                 lines.append(block.text())
-
-            os.remove(lines[0] + '.txt')
+            path = os.path.join(self.projection ,lines[0] + '.txt')
+            os.remove(path)
+            for sprite in self.gui.sprites:
+                if path == sprite.file:
+                    sprite.kill()
+                    self.gui.sprites.remove(sprite)
+                    break
 
     def compile(self):
         os.system("py html."+ open("info.ini", 'r').readline() +" --file " + self.projection)
