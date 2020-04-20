@@ -81,14 +81,18 @@ class page(QMainWindow, QWidget):
         self.d = 't'
 
     def blue(self):
-        self.textedit = QTextEdit(self)
-        self.setCentralWidget(self.textedit)
+        fname = QFileDialog.getOpenFileName(self, 'Open file',
+                                            '.', "JPEG files (*.jpg *.jpeg);;PNG files (*.png)")
+        imagePath = fname[0]
         self.d = 'i'
+        self.done(imagePath)
 
     def vid(self):
-        self.textedit = QTextEdit(self)
-        self.setCentralWidget(self.textedit)
+        fname = QFileDialog.getOpenFileName(self, 'Open file',
+                                            '.', "MP4 files (*.mp4);;MKV files (*.mkv)")
+        imagePath = fname[0]
         self.d = 'v'
+        self.done(imagePath)
 
 
     def table(self):
@@ -121,22 +125,27 @@ class page(QMainWindow, QWidget):
     def compile(self):
         os.system("py html."+ open("info.ini", 'r').readline() +" --file " + self.projection)
 
-    def done(self):
-        doc = self.textedit.document()
-        block = doc.begin()
-        lines = [block.text()]
-        for i in range(1, doc.blockCount()):
-            block = block.next()
-            lines.append(block.text())
+    def done(self, a = ""):
+        if self.d != 'i' and self.d != 'v':
+            doc = self.textedit.document()
+            block = doc.begin()
+            lines = [block.text()]
+            for i in range(1, doc.blockCount()):
+                block = block.next()
+                lines.append(block.text())
         if self.d != 'p':
             border_radius = 0
             if self.projection != '':
-                file = os.path.join(self.projection ,lines[0]) + '.txt'
+                if self.d != 'i' and self.d != 'v':
+                    file = os.path.join(self.projection ,lines[0]) + '.txt'
+                else:
+                    file = os.path.join(self.projection ,a.split('/')[-1]) + '.txt'
+                    print(a.split('/')[-1])
                 self.w = open(file, 'w')
             else:
                 return
         if self.d == 'i':
-            p = lines[0] + '\n'
+            p = a.split('/')[-1] + '\n'
         elif self.d == 't':
             p = lines[0] + '.txt' + '\n'
         elif self.d == 'b':
@@ -146,7 +155,7 @@ class page(QMainWindow, QWidget):
         elif self.d == 'p':
             lines[0] += '.site'
         elif self.d == 'v':
-            p =lines[0] + '.vid' +'\n'
+            p = a.split('\\')[-1] + '.vid' +'\n'
         elif self.d == 'ta':
             p = lines[0] + '.tab'+'\n'
         else:pass
@@ -161,25 +170,26 @@ class page(QMainWindow, QWidget):
                 size = '20'
                 txt = lines[1:-1]
         except:pass
-        for i in range(1, len(lines)):
-            if lines[i] == '':
-                continue
-            if self.d == 'b':
-                if 'script:' in lines[i] and lines[i][-3:] == '.js':
-                    p += lines[i].split(':')[-1]
-                    if i != len(lines) - 1:
-                        p += '\n'
+        if self.d != 'i' and self.d != 'v':
+            for i in range(1, len(lines)):
+                if lines[i] == '':
                     continue
-            if 'border_radius' in lines[i]:
-                border_radius = int(lines[i].split(':')[-1])
-            if lines[i] == 'default':
-                p += font + '\n'
-                p += size + '\n'
-                p += color
-            else:
-                p += lines[i]
-            if i != len(lines) - 1:
-                p += '\n'
+                if self.d == 'b':
+                    if 'script:' in lines[i] and lines[i][-3:] == '.js':
+                        p += lines[i].split(':')[-1]
+                        if i != len(lines) - 1:
+                            p += '\n'
+                        continue
+                if 'border_radius' in lines[i]:
+                    border_radius = int(lines[i].split(':')[-1])
+                if lines[i] == 'default':
+                    p += font + '\n'
+                    p += size + '\n'
+                    p += color
+                else:
+                    p += lines[i]
+                if i != len(lines) - 1:
+                    p += '\n'
         if self.d == 'p':
             self.projection = lines[0]
             os.mkdir(lines[0])
@@ -188,7 +198,7 @@ class page(QMainWindow, QWidget):
             self.gui.add_item(Text(txt, (randint(1, 100), randint(1, 100)), file, font, int(size), dictionary[color]))
             self.gui.update()
         elif self.d == 'i':
-            self.gui.add_item(Image(file, (randint(1, 100), randint(1, 100)), lines[0]))
+            self.gui.add_item(Image(a, (randint(1, 100), randint(1, 100)), file))
             self.gui.update()
         elif self.d == 'b':
             self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (randint(1, 100), randint(1, 100)), (70, 40), border_radius = border_radius))
@@ -199,7 +209,7 @@ class page(QMainWindow, QWidget):
             self.gui.update()
             p += 'border-radius:'+str(border_radius)+ '\n'
         elif self.d == 'v':
-            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), border_radius))
+            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), (300, 200)))
             self.gui.update()
         elif self.d == 'ta':
             self.gui.add_item(Table((randint(1, 100), randint(1, 100)) , int(lines[-1]), lines[2:-2], file))

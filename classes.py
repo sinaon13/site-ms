@@ -116,7 +116,7 @@ class GUI:
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
-                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.x > chosen.w - 4):
@@ -128,7 +128,7 @@ class GUI:
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
-                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
                             x, y = chosen.rect.x, chosen.rect.y
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
@@ -143,7 +143,7 @@ class GUI:
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
-                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.y > chosen.h - 4):
@@ -156,7 +156,7 @@ class GUI:
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
-                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.border_radius)
+                                chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                 else:
@@ -391,7 +391,7 @@ class Input(pg.sprite.Sprite, geometric_class):
             self.last.y = self.rect.y
 
 class Movie(pg.sprite.Sprite, geometric_class):
-    def __init__(self, m, pos, size, border_radius):
+    def __init__(self, m, pos, size):
         self.type = 'movie'
         pg.sprite.Sprite.__init__(self)
         self.w, self.h = size
