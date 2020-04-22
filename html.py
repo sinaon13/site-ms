@@ -185,8 +185,8 @@ for i in tab:
       font-family: arial, sans-serif;
       border-collapse: collapse;
       position:absolute;
-      top:''' + i[-2] + '''px;
-      left:''' + i[-1] + '''px;
+      top:''' + i[-1] + '''px;
+      left:''' + i[-2] + '''px;
       border-color:black;
     }
     td, th {

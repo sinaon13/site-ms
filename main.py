@@ -72,6 +72,21 @@ class khar(QWidget):
         self.setWindowTitle('Site Maker')
         self.setWindowIcon(QIcon('./icons/webb.png'))
 
+class Hint(QWidget):
+    def __init__(self, path):
+        super().__init__()
+        self.image = path
+        self.initUI()
+
+    def initUI(self):
+        self.label = QLabel('Hint', self)
+        self.setGeometry(300, 300, 704, 436)
+        pixmap = QPixmap(self.image)
+        self.label.setPixmap(pixmap)
+        self.resize(pixmap.width(),pixmap.height())
+        self.label.setGeometry(0,0,pixmap.width(),pixmap.height())
+        self.show()
+
 
 class page(QMainWindow, QWidget):
 
@@ -79,6 +94,7 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 't'
+        self.hint = Hint('.\\hints\\text.png')
 
     def blue(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
