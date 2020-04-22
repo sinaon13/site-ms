@@ -52,11 +52,11 @@ class GUI:
                             except :pass
                             text = txt
                         b = Box(text, (writing.rect.x, writing.rect.y))
-                        chosen.boxes[writing.indexing[0]][writing.indexing[1]] = b
                         b.rect.x, b.rect.y = writing.rect.x, writing.rect.y
                         b.indexing = writing.indexing
                         b.pointer = writing.pointer
                         b.ind = writing.ind
+                        chosen.boxes[writing.indexing[0]][writing.indexing[1]] = b
                         writing = b
 
                         if event.key == pg.K_RSHIFT or event.key == pg.K_LSHIFT:
@@ -78,17 +78,18 @@ class GUI:
                 if hits:
                     for hit in hits:
                         if "boxes" in dir(hit):
-                            chosen = hits[0]
+                            chosen = hit
                             for i in chosen.boxes:
                                 for j in i:
-                                    j.set_text(j.text, j.f)
                                     j.rect.x, j.rect.y = j.rect.x + chosen.rect.x ,j.rect.y + chosen.rect.y
-                                    j.pointer = len(j.text)
                                 h = pg.sprite.spritecollide(self.mouse, i, False)
                                 for j in i:
                                     j.rect.x, j.rect.y = j.rect.x - chosen.rect.x ,j.rect.y - chosen.rect.y
+                                    j.pointer = len(j.text)
+                                    j.set_text(j.text, j.f)
                                 if h:
                                     writing = h[0]
+                                    print(writing.text, writing.indexing, writing.rect)
                                 continue
                             if writing:
                                 continue
@@ -347,20 +348,20 @@ class Input(pg.sprite.Sprite, geometric_class):
         self.border_radius = border_radius
         if self.border_radius > 0:
             self.image.set_colorkey((0, 0, 0))
-            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.rect(self.image, self.color, (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
-            pg.draw.rect(self.image, self.color, (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
-            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, 2), (self.w - self.border_radius, 2), 5);
-            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 5);
-            pg.draw.line(self.image, (1, 1, 1), (2, self.border_radius), (2, self.h - self.border_radius), 5);
-            pg.draw.line(self.image, (1, 1, 1), (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 5);
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
+            pg.draw.rect(self.image, (255, 255, 255), (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
+            pg.draw.rect(self.image, (255, 255, 255), (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
+            pg.draw.line(self.image, self.color, (self.border_radius, 2), (self.w - self.border_radius, 2), 5);
+            pg.draw.line(self.image, self.color, (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 5);
+            pg.draw.line(self.image, self.color, (2, self.border_radius), (2, self.h - self.border_radius), 5);
+            pg.draw.line(self.image, self.color, (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 5);
         else:
             self.image.fill((255, 255, 255))
             data = [0] * 4
@@ -400,6 +401,11 @@ class Movie(pg.sprite.Sprite, geometric_class):
         self.image.fill((255, 255, 255))
         self.color = (100, 100, 100)
         pg.draw.rect(self.image, self.color, (0, 0, self.w, self.h), 5)
+        f = pg.font.Font(pg.font.match_font('arial'), 30)
+        txt = f.render(m[:-4].split('\\')[-1], True, (0, 0, 0))
+        rect = txt.get_rect()
+        rect.center = self.w // 2, self.h // 2
+        self.image.blit(txt, rect)
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
         self.last = self.image.get_rect()
@@ -437,7 +443,7 @@ class Box(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
         self.rect.x += 10
-        seff.rect.y += 10
+        self.rect.y += 10
         self.indexing = [0, 0]
         self.ind = 0
     def set_text(self, text, font):
@@ -526,7 +532,6 @@ class Table(pg.sprite.Sprite):
                     with open(self.file, 'w') as F:
                         for i in lines:
                             F.write(i)
-                        print(self.rect)
                         F.write(str(self.rect.x) + ' ' + str(self.rect.y))
                         F.close()
                     f.close()
