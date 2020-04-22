@@ -182,6 +182,8 @@ class page(QMainWindow, QWidget):
                         continue
                 if 'border_radius' in lines[i]:
                     border_radius = int(lines[i].split(':')[-1])
+                    p += 'border-radius:'+str(border_radius) + '\n'
+                    continue
                 if lines[i] == 'default':
                     p += font + '\n'
                     p += size + '\n'
@@ -212,11 +214,9 @@ class page(QMainWindow, QWidget):
         elif self.d == 'b':
             self.gui.add_item(Button(file, lines[0], dictionary[lines[1]], (randint(1, 100), randint(1, 100)), (70, 40), border_radius = border_radius))
             self.gui.update()
-            p += '\nborder-radius:'+str(border_radius) + '\n'
         elif self.d == 'I':
             self.gui.add_item(Input(file, (randint(1, 100), randint(1, 100)), (300, 40), dictionary[lines[1]], border_radius))
             self.gui.update()
-            p += '\nborder-radius:'+str(border_radius)+ '\n'
         elif self.d == 'v':
             self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), (300, 200)))
             self.gui.update()
@@ -228,6 +228,7 @@ class page(QMainWindow, QWidget):
             self.w.close()
 
     def load(self):
+        self.gui.sprites = pg.sprite.Group()
         file = str(QFileDialog.getExistingDirectory(self, "Select project .site"))
         for i in os.listdir(file):
             if i[-4:] == '.txt':
@@ -251,13 +252,13 @@ class page(QMainWindow, QWidget):
                             break
                     self.gui.add_item(Button(os.path.join(file, i), lines[0][:-4], dictionary[lines[1][:-1]], (int(lines[-1].split()[0]), int(lines[-1].split()[-1][:-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), border_radius = border_radius))
                     self.gui.update()
-                elif lines[0][-5:-1] == 'inp':
+                elif lines[0][-4:-1] == 'inp':
                     border_radius = 0
                     for i in lines:
                         if 'border-radius' in i:
                             border_radius = int(i.split(':')[-1])
                             break
-                    self.gui.add_item(Input(os.path.join(file, i), (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), dictionary[lines[1]], border_radius))
+                    self.gui.add_item(Input(os.path.join(file, i), (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), dictionary[lines[1][:-1]], border_radius))
                     self.gui.update()
                 elif lines[0][-4:-1] == 'vid':
                     self.gui.add_item(Movie(os.path.join(file, i), (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1]))))

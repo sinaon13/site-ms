@@ -51,6 +51,9 @@ class GUI:
                                 txt = text[:writing.pointer] + text[writing.pointer + 1:]
                             except :pass
                             text = txt
+                        if event.key == pg.K_SPACE:
+                            text = text[:writing.pointer] + ' ' + text[writing.pointer:]
+                            writing.pointer += 1
                         b = Box(text, (writing.rect.x, writing.rect.y))
                         b.rect.x, b.rect.y = writing.rect.x, writing.rect.y
                         b.indexing = writing.indexing
@@ -89,7 +92,6 @@ class GUI:
                                     j.set_text(j.text, j.f)
                                 if h:
                                     writing = h[0]
-                                    print(writing.text, writing.indexing, writing.rect)
                                 continue
                             if writing:
                                 continue
@@ -349,19 +351,19 @@ class Input(pg.sprite.Sprite, geometric_class):
         if self.border_radius > 0:
             self.image.set_colorkey((0, 0, 0))
             pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.border_radius), self.border_radius - 3)
             pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
             pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
             pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
+            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
             pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
             pg.draw.rect(self.image, (255, 255, 255), (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
             pg.draw.rect(self.image, (255, 255, 255), (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
-            pg.draw.line(self.image, self.color, (self.border_radius, 2), (self.w - self.border_radius, 2), 5);
-            pg.draw.line(self.image, self.color, (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 5);
-            pg.draw.line(self.image, self.color, (2, self.border_radius), (2, self.h - self.border_radius), 5);
-            pg.draw.line(self.image, self.color, (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 5);
+            pg.draw.line(self.image, self.color, (self.border_radius, 2), (self.w - self.border_radius, 2), 3);
+            pg.draw.line(self.image, self.color, (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 3);
+            pg.draw.line(self.image, self.color, (2, self.border_radius), (2, self.h - self.border_radius), 3);
+            pg.draw.line(self.image, self.color, (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 3);
         else:
             self.image.fill((255, 255, 255))
             data = [0] * 4
@@ -480,14 +482,14 @@ class Table(pg.sprite.Sprite):
         column = 0
         for text in self.heads:
             i = Box(text, (0, 0))
-            i.rect.x, i.rect.y = position[0] * column + 5, 5
+            i.rect.x, i.rect.y = position[0] * column, 1
             self.image.blit(i.image, i.rect)
             column += 1
-        column = 0
+        column = 1
         for text in self.boxes:
             sheet = 0
             for i in text:
-                i.rect.x, i.rect.y= position[0] * sheet, position[1] * column + 1
+                i.rect.x, i.rect.y= position[0] * sheet, position[1] * column
                 self.image.blit(i.image, i.rect)
                 sheet += 1
             column += 1
@@ -502,16 +504,16 @@ class Table(pg.sprite.Sprite):
         l = []
         self.max = 0
         self.high = 0
+        self.high = Box(' ', (0, 0)).image.get_height() + 4
         for i in self.heads:
             b = Box(i, (0, 0))
-            self.max = max(self.max, b.txt.get_width() + 20)
-        self.high = b.txt.get_width() + 10
+            self.max = max(self.max, b.txt.get_width() + 8)
         for i in range(y):
             a = []
             for j in range(x):
                 b = Box('', (0, 0))
                 b.indexing = [i, j]
-                self.max = max(self.max, b.txt.get_width() + 20)
+                self.max = max(self.max, b.txt.get_width() + 8)
                 a.append(b)
             l.append(a)
         return l;
@@ -542,11 +544,26 @@ class Table(pg.sprite.Sprite):
             with open(self.file[:-4] + '.tab.data', 'w') as f:
                 for i in self.boxes:
                     for j in i[:-1]:
-                        if j.text != '':
+                        if ' ' in j.text:
+                            p = ''
+                            for x in j.text:
+                                if x == ' ':
+                                    p+= ';;'
+                                else:
+                                    p += x
+                            p += ' '
+                            f.write(p)
+                        elif j.text != '':
                             f.write(j.text + ' ')
                         else:
                             f.write('* ')
-                    if i[-1].text != '':
+                    if ' ' in j.text:
+                        p = ''
+                        for x in j.text.split()[:-1]:
+                            p+= x +';;'
+                        p += j.text.split()[-1] + '\n'
+                        f.write(p)
+                    elif i[-1].text != '':
                         f.write(i[-1].text + '\n')
                     else:
                         f.write('*\n')

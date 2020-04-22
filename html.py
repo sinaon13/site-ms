@@ -257,7 +257,11 @@ for i in range(len(tab)):
             ht.write('<tr>\n')
             d = l[j].split('\n')[0]
             for p in range(x):
-                ht.write('<td>'+ d.split()[p] +'</td>\n')
+                q = ''
+                for a in d.split()[p].split(';;')[:-1]:
+                    q+=a + ' '
+                q += d.split()[p].split(';;')[-1]
+                ht.write('<td>'+ q +'</td>\n')
             ht.write('</tr>\n')
         f.close()
 
