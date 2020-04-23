@@ -79,6 +79,8 @@ class Hint(QWidget):
         self.initUI()
 
     def initUI(self):
+        self.setWindowTitle('Hint')
+        self.setWindowIcon(QIcon('.\\icons\\help.png'))
         self.label = QLabel('Hint', self)
         self.setGeometry(300, 300, 704, 436)
         pixmap = QPixmap(self.image)
@@ -115,12 +117,14 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'ta'
+        self.hint = Hint('.\\hints\\table.png')
 
 
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'b'
+        self.hint = Hint('.\\hints\\button.png')
 
     def delete(self):
         doc = self.textedit.document()
@@ -403,6 +407,7 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'I'
+        self.hint = Hint(".\\hints\\input.png")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
