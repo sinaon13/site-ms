@@ -334,6 +334,7 @@ class page(QMainWindow, QWidget):
         self.projection = file
 
     def create(self):
+        self.gui.sprites = pg.sprite.Group()
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'p'
