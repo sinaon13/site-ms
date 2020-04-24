@@ -176,7 +176,8 @@ for i in inp:
     top : ''' + i[-1] + '''px;
     width:''' + i[-3].split()[0]+ '''px;
     height: '''+ i[-3].split()[-1] + '''px;
-    border: 2px solid '''+ i[0] + ''' ;
+    color:'''+ i[-7][:-1]+''';
+    border: 2px solid black;
 }''')
     fl+=1
 fl=0

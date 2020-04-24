@@ -220,7 +220,7 @@ class page(QMainWindow, QWidget):
                 reply = QMessageBox.question(self, 'Folder Found', 'This project is already exist. Do you want to replace it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     for i in os.listdir(lines[0]):
-                        os.remove(i)
+                        os.remove(os.path.join(lines[0],i))
                 else:
                     self.projection = ''
                     return

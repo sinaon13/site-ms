@@ -2,6 +2,44 @@ import pygame as pg
 from threading import Thread
 import os, sys
 vec = pg.math.Vector2
+def set_border(surface,rect,color,radius=0):
+
+    """
+    AAfilledRoundedRect(surface,rect,color,radius=0.4)
+
+    surface : destination
+    rect    : rectangle
+    color   : rgb or rgba
+    radius  : 0 <= radius <= 1
+    """
+
+    rect         = pg.Rect(rect)
+    color        = pg.Color(*color)
+    alpha        = color.a
+    color.a      = 0
+    pos          = rect.topleft
+    rect.topleft = 0,0
+    rectangle    = pg.Surface(rect.size,pg.SRCALPHA)
+
+    circle       = pg.Surface([min(rect.size)*3]*2,pg.SRCALPHA)
+    pg.draw.ellipse(circle,(0,0,0),circle.get_rect(),0)
+    circle       = pg.transform.smoothscale(circle,[int(min(rect.size)*radius)]*2)
+
+    radius              = rectangle.blit(circle,(0,0))
+    radius.bottomright  = rect.bottomright
+    rectangle.blit(circle,radius)
+    radius.topright     = rect.topright
+    rectangle.blit(circle,radius)
+    radius.bottomleft   = rect.bottomleft
+    rectangle.blit(circle,radius)
+
+    rectangle.fill((0,0,0),rect.inflate(-radius.w,0))
+    rectangle.fill((0,0,0),rect.inflate(0,-radius.h))
+
+    rectangle.fill(color,special_flags=pg.BLEND_RGBA_MAX)
+    rectangle.fill((255,255,255,alpha),special_flags=pg.BLEND_RGBA_MIN)
+
+    return surface.blit(rectangle,pos)
 class geometric_class(object): # Internal Class
     def __init__(self):
         self.geometric = True
@@ -280,33 +318,36 @@ class Button(pg.sprite.Sprite, geometric_class):
         geometric_class.__init__(self)
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface(size)
+        self.image.fill((255, 255, 255))
         self.w, self.h = size
         self.border_radius = border_radius
         self.text = text
         self.color = color
 
         if self.border_radius > 0:
-            self.image.set_colorkey((0, 0, 0))
-            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (1, 1, 1), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.rect(self.image, self.color, (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
-            pg.draw.rect(self.image, self.color, (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
-            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, 1), (self.w - self.border_radius, 1), 3);
-            pg.draw.line(self.image, (1, 1, 1), (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 3);
-            pg.draw.line(self.image, (1, 1, 1), (1, self.border_radius), (1, self.h - self.border_radius), 3);
-            pg.draw.line(self.image, (1, 1, 1), (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 3);
+            self.image.set_colorkey((255, 255, 255))
+            set_border(self.image, (0, 0, self.w, self.h), self.color, min(border_radius / min(self.w, self.h), 1))
+            self.mask = pg.mask.from_surface(self.image)
+            self.border = []
+            c = 1
+            p = 0
+            for i in range(self.h):
+                a = []
+                for j in range(self.w):
+                    if self.mask.get_at((j, i)):
+                        a.append([j, i])
+                if i == 0 or i == self.h - 1:
+                    self.border += a
+                else:
+                    self.border.append(a[0])
+                    self.border.append(a[-1])
+            for i in self.border:
+                self.image.set_at(i, (0, 0, 0))
         else:
             self.image.fill(color)
-            pg.draw.rect(self.image, (0, 0, 0), (0, 0, self.w, self.h), 5)
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
-        txt = font.render(text, True, (255, 255, 255))
+        txt = font.render(text, True, (1, 1, 1))
         txt_rct = txt.get_rect()
         txt_rct.center = self.w // 2 , self.h // 2
         self.image.blit(txt, txt_rct)
@@ -346,29 +387,33 @@ class Input(pg.sprite.Sprite, geometric_class):
         self.w, self.h = size
         geometric_class.__init__(self)
         self.image = pg.Surface(size)
+        self.image.fill((255, 255, 255))
         self.color = color
         self.border_radius = border_radius
         if self.border_radius > 0:
-            self.image.set_colorkey((0, 0, 0))
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, self.color, (self.w - self.border_radius, self.h - self.border_radius), self.border_radius, 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.circle(self.image, (255, 255, 255), (self.w - self.border_radius, self.h - self.border_radius), self.border_radius - 3)
-            pg.draw.rect(self.image, (255, 255, 255), (self.border_radius, 0, self.w - (2 * self.border_radius), self.h))
-            pg.draw.rect(self.image, (255, 255, 255), (0, self.border_radius, self.w, self.h - (2 * self.border_radius)))
-            pg.draw.line(self.image, self.color, (self.border_radius, 2), (self.w - self.border_radius, 2), 3);
-            pg.draw.line(self.image, self.color, (self.border_radius, self.h - 2), (self.w - self.border_radius, self.h - 2), 3);
-            pg.draw.line(self.image, self.color, (2, self.border_radius), (2, self.h - self.border_radius), 3);
-            pg.draw.line(self.image, self.color, (self.w - 2, self.border_radius), (self.w - 2, self.h - self.border_radius), 3);
-        else:
+            self.image.set_colorkey((255, 255, 255, 255))
+            set_border(self.image, (0, 0, self.w, self.h), color, min(border_radius / min(self.w, self.h), 1))
+            self.mask = pg.mask.from_surface(self.image)
             self.image.fill((255, 255, 255))
-            data = [0] * 4
-            data[2], data[3] = size
-            pg.draw.rect(self.image, self.color, data, 5)
+            self.border = []
+            c = 1
+            p = 0
+            for i in range(self.h):
+                a = []
+                for j in range(self.w):
+                    if self.mask.get_at((j, i)):
+                        a.append([j, i])
+                if i == 0 or i == self.h - 1:
+                    self.border += a
+                else:
+                    if len(a):
+                        self.border.append(a[0])
+                        self.border.append(a[-1])
+            for i in self.border:
+                self.image.set_at(i, color)
+        else:
+            self.image.fill((255, 255, 255, 255))
+            pg.draw.rect(self.image, color, (0, 0, self.w - 3, self.h - 3), 3)
         self.rect = self.image.get_rect()
         self.last = self.image.get_rect()
         self.rect.x, self.rect.y = pos
