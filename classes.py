@@ -326,7 +326,7 @@ class Button(pg.sprite.Sprite, geometric_class):
 
         if self.border_radius > 0:
             self.image.set_colorkey((255, 255, 255))
-            set_border(self.image, (0, 0, self.w, self.h), self.color, min(border_radius / min(self.w, self.h), 1))
+            set_border(self.image, (0, 0, self.w, self.h), self.color, min(border_radius / (min(self.w, self.h) // 2), 1))
             self.mask = pg.mask.from_surface(self.image)
             self.border = []
             c = 1
@@ -392,7 +392,7 @@ class Input(pg.sprite.Sprite, geometric_class):
         self.border_radius = border_radius
         if self.border_radius > 0:
             self.image.set_colorkey((255, 255, 255, 255))
-            set_border(self.image, (0, 0, self.w, self.h), color, min(border_radius / min(self.w, self.h), 1))
+            set_border(self.image, (0, 0, self.w, self.h), color, min(border_radius / (min(self.w, self.h)// 2), 1))
             self.mask = pg.mask.from_surface(self.image)
             self.image.fill((255, 255, 255))
             self.border = []
