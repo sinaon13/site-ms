@@ -262,7 +262,7 @@ class page(QMainWindow, QWidget):
                     self.gui.add_item(Text(l, (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), os.path.join(file, i), lines[-5], int(lines[-4]), dictionary[lines[-3][:-1]]))
                     self.gui.update()
                 elif lines[0][-5:-1] == '.png':
-                    self.gui.add_item(Image(lines[0][:-1], (int(lines[-1].split()[0]), int(lines[-1].split()[-1][:-1])), os.path.join(file, i)))
+                    self.gui.add_item(Image(lines[0][:-1], (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), os.path.join(file, i)))
                     self.gui.update()
                 elif lines[0][-4:-1] == 'btn':
                     border_radius = 0
@@ -270,7 +270,7 @@ class page(QMainWindow, QWidget):
                         if 'border-radius' in i:
                             border_radius = int(i.split(':')[-1])
                             break
-                    self.gui.add_item(Button(os.path.join(file, i), lines[0][:-4], dictionary[lines[1][:-1]], (int(lines[-1].split()[0]), int(lines[-1].split()[-1][:-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), border_radius = border_radius))
+                    self.gui.add_item(Button(os.path.join(file, i), lines[0][:-4], dictionary[lines[1][:-1]], (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), border_radius = border_radius))
                     self.gui.update()
                 elif lines[0][-4:-1] == 'inp':
                     border_radius = 0
