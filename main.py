@@ -146,7 +146,7 @@ class page(QMainWindow, QWidget):
         os.system("py html."+ open("info.ini", 'r').readline() +" --file " + self.projection)
 
     def done(self, a = ""):
-        if self.d != 'i' and self.d != 'v':
+        if self.d != 'i' and self.d != 'v' and self.d != 'p':
             doc = self.textedit.document()
             block = doc.begin()
             lines = [block.text()]
@@ -173,7 +173,7 @@ class page(QMainWindow, QWidget):
         elif self.d == 'I':
             p = lines[0] + 'inp' + '\n'
         elif self.d == 'p':
-            lines[0] += '.site'
+            a += '.site'
         elif self.d == 'v':
             p = a.split('\\')[-1] + '.vid' +'\n'
         elif self.d == 'ta':
@@ -190,7 +190,7 @@ class page(QMainWindow, QWidget):
                 size = '20'
                 txt = lines[1:-1]
         except:pass
-        if self.d != 'i' and self.d != 'v':
+        if self.d != 'i' and self.d != 'v' and self.d != 'p':
             for i in range(1, len(lines)):
                 if lines[i] == '':
                     continue
@@ -213,14 +213,14 @@ class page(QMainWindow, QWidget):
                 if i != len(lines) - 1:
                     p += '\n'
         if self.d == 'p':
-            self.projection = lines[0]
+            self.projection = a
             try:
-                os.mkdir(lines[0])
+                os.mkdir(a)
             except:
                 reply = QMessageBox.question(self, 'Folder Found', 'This project is already exist. Do you want to replace it?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                 if reply == QMessageBox.Yes:
-                    for i in os.listdir(lines[0]):
-                        os.remove(os.path.join(lines[0],i))
+                    for i in os.listdir(a):
+                        os.remove(os.path.join(a,i))
                 else:
                     self.projection = ''
                     return
@@ -335,9 +335,10 @@ class page(QMainWindow, QWidget):
 
     def create(self):
         self.gui.sprites = pg.sprite.Group()
-        self.textedit = QTextEdit(self)
-        self.setCentralWidget(self.textedit)
+        fname, t = QFileDialog.getSaveFileName(self, 'New Project',"")
         self.d = 'p'
+        print(fname)
+        self.done(fname)
 
     def __init__(self):
         super().__init__()
