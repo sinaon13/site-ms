@@ -65,7 +65,14 @@ for file in glob.glob("*.txt"):
         tab.append(r[1:-1] + r[-1].split())
         data.append(r[0][:-1] + '.data')
 
-
+link=[]
+for file in glob.glob("*.txt"):
+    if ".png" in file:
+        continue
+    r=open(file,'r').readlines()
+    if r[0][-6:][:-1] == '.link' :
+        link.append(r[1:])
+        
 img = []
 for i in im:
     q = []
@@ -90,6 +97,7 @@ btn2 = []
 inp2 = []
 vid2=[]
 tab2=[]
+link2=[]
 print(scription)
 ##for i in range(len(txt)):
 ##    for g in range(len(txt[i])):
@@ -197,6 +205,17 @@ for i in tab:
     }
     ''')
     fl+= 1
+fl=0
+for i in link:
+    link2.append('''\nlink'''+str(fl))
+    ht.write('''\n.link'''+str(fl)+'''{
+    position:absolute;
+    top:'''+ i[-1]+'''px;
+    left:'''+i[-2][:-1]+'''px;
+    font-family:'''+i[2]+''';
+    font-size:'''+i[3]+'''px;
+    color:'''+i[4]+''';}''')
+    fl+=1
 fl = 0
 for i in video:
     vid2.append('vid' + str(fl))
@@ -236,6 +255,9 @@ for i in range(len(vid2)):
     <source src="'''+videoname[i]+'''" type="video/''' + videoname[i].split('.')[-1] +'''">
     </video>
     ''')
+for i in range(len(link2)):
+    clas='class="'+link2[i]+'"'
+    ht.write('\n<a href="'+link[i][0]+'" ' +clas+'>'+link[i][1]+'</a>')
 sf=-1
 for i in range(len(tab)):
     if not len(tab[i]):break

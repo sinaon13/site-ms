@@ -120,6 +120,14 @@ class page(QMainWindow, QWidget):
         self.hint = Hint('.\\hints\\table.png')
 
 
+    def link(self):
+        self.textedit = QTextEdit(self)
+        self.setCentralWidget(self.textedit)
+        self.d = 'l'
+    
+    
+
+    
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
@@ -178,6 +186,8 @@ class page(QMainWindow, QWidget):
             p = a.split('\\')[-1] + '.vid' +'\n'
         elif self.d == 'ta':
             p = lines[0] + '.tab'+'\n'
+        elif self.d== 'l':
+            p = lines[0] +'.link' + '\n'
         else:pass
         try:
             color = lines[-1]
@@ -243,6 +253,7 @@ class page(QMainWindow, QWidget):
         elif self.d == 'ta':
             self.gui.add_item(Table((randint(1, 100), randint(1, 100)) , int(lines[-1]), lines[2:-2], file))
             self.gui.update()
+
         if self.d != 'p':
             self.w.write(p)
             self.w.close()
@@ -364,6 +375,9 @@ class page(QMainWindow, QWidget):
         table=QAction(QIcon('./icons/table.png'), 'table', self)
         table.setStatusTip('Add Table')
         table.triggered.connect(self.table)
+        link=QAction(QIcon('./icons/link.png'), 'link',self)
+        link.setStatusTip('Make Link')
+        link.triggered.connect(self.link)
         save = QAction(QIcon('./icons/save.png'), 'save', self)
         save.setStatusTip('Save')
         save.triggered.connect(self.done)
@@ -393,6 +407,7 @@ class page(QMainWindow, QWidget):
         toolbar.addAction(inp)
         toolbar.addAction(table)
         toolbar.addAction(vid)
+        toolbar.addAction(link)
         toolbar.addAction(save)
         toolbar.addAction(delete)
         toolbar.addAction(cmple)
