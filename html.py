@@ -71,8 +71,8 @@ for file in glob.glob("*.txt"):
         continue
     r=open(file,'r').readlines()
     if r[0][-6:][:-1] == '.link' :
-        link.append(r[1:])
-        
+        link.append(r[1:-1] + r[-1].split())
+
 img = []
 for i in im:
     q = []
@@ -207,11 +207,11 @@ for i in tab:
     fl+= 1
 fl=0
 for i in link:
-    link2.append('''\nlink'''+str(fl))
+    link2.append('''link'''+str(fl))
     ht.write('''\n.link'''+str(fl)+'''{
     position:absolute;
     top:'''+ i[-1]+'''px;
-    left:'''+i[-2][:-1]+'''px;
+    left:'''+i[-2]+'''px;
     font-family:'''+i[2]+''';
     font-size:'''+i[3]+'''px;
     color:'''+i[4]+''';}''')

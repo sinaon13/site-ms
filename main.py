@@ -124,10 +124,10 @@ class page(QMainWindow, QWidget):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'l'
-    
-    
 
-    
+
+
+
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
@@ -253,7 +253,9 @@ class page(QMainWindow, QWidget):
         elif self.d == 'ta':
             self.gui.add_item(Table((randint(1, 100), randint(1, 100)) , int(lines[-1]), lines[2:-2], file))
             self.gui.update()
-
+        elif self.d == 'l':
+            self.gui.add_item(Link(txt[1:], (randint(1, 100), randint(1, 100)), font, int(size), dictionary[color], file))
+            self.gui.update()
         if self.d != 'p':
             self.w.write(p)
             self.w.close()
@@ -268,8 +270,8 @@ class page(QMainWindow, QWidget):
                     f.close()
                 if lines[0][-5:-1] == '.txt':
                     l = []
-                    for i in lines[1:-5]:
-                        l.append(i[:-1])
+                    for j in lines[1:-5]:
+                        l.append(j[:-1])
                     self.gui.add_item(Text(l, (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), os.path.join(file, i), lines[-5], int(lines[-4]), dictionary[lines[-3][:-1]]))
                     self.gui.update()
                 elif lines[0][-5:-1] == '.png':
@@ -277,16 +279,16 @@ class page(QMainWindow, QWidget):
                     self.gui.update()
                 elif lines[0][-4:-1] == 'btn':
                     border_radius = 0
-                    for i in lines:
-                        if 'border-radius' in i:
-                            border_radius = int(i.split(':')[-1])
+                    for j in lines:
+                        if 'border-radius' in j:
+                            border_radius = int(j.split(':')[-1])
                             break
                     self.gui.add_item(Button(os.path.join(file, i), lines[0][:-4], dictionary[lines[1][:-1]], (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), border_radius = border_radius))
                     self.gui.update()
                 elif lines[0][-4:-1] == 'inp':
                     border_radius = 0
-                    for i in lines:
-                        if 'border-radius' in i:
+                    for j in lines:
+                        if 'border-radius' in j:
                             border_radius = int(i.split(':')[-1])
                             break
                     self.gui.add_item(Input(os.path.join(file, i), (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), (int(lines[-2].split()[0]), int(lines[-2].split()[-1])), dictionary[lines[1][:-1]], border_radius))
@@ -296,8 +298,8 @@ class page(QMainWindow, QWidget):
                     self.gui.update()
                 elif lines[0][-5:-1] == '.tab':
                     heads = []
-                    for i in lines[2:-4]:
-                        heads.append(i[:-1])
+                    for j in lines[2:-4]:
+                        heads.append(j[:-1])
                     t = Table((int(lines[-1].split()[0]), int(lines[-1].split()[-1][:-1])) , int(lines[-3][:-1]), heads, os.path.join(file, i))
                     with open(os.path.join(file, lines[0][:-1] + '.data'), 'r') as f:
                         data = f.readlines()
@@ -341,6 +343,12 @@ class page(QMainWindow, QWidget):
                     t.rect = t.image.get_rect()
                     t.rect.x, t.rect.y = int(lines[-1].split()[0]), int(lines[-1].split()[-1][:-1])
                     self.gui.add_item(t)
+                    self.gui.update()
+                elif lines[0][-5:-1] == '.link':
+                    l = []
+                    for j in lines[1:-5]:
+                        l.append(j[:-1])
+                    self.gui.add_item(Link(l[1:], (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), lines[-5], int(lines[-4]), dictionary[lines[-3][:-1]], os.path.join(file, i)))
                     self.gui.update()
         self.projection = file
 
