@@ -2,6 +2,7 @@ import pygame as pg
 from threading import Thread
 import os, sys
 vec = pg.math.Vector2
+# تابع گرد کردن دور صفحه ها
 def set_border(surface,rect,color,radius=0):
 
     """
@@ -40,11 +41,16 @@ def set_border(surface,rect,color,radius=0):
     rectangle.fill((255,255,255,alpha),special_flags=pg.BLEND_RGBA_MIN)
 
     return surface.blit(rectangle,pos)
+
+# کلاس جامعی که شناسه قابلیت تغییر اندازه یک صفحه را می دهد
 class geometric_class(object): # Internal Class
     def __init__(self):
         self.geometric = True
+
+# کلاس اصلی که پنجره گرافیک در اختیار  اوست
 class GUI:
     def __init__(self):
+        #  آماده کردن صفحه ی گرافیک و مجموعه ای برای کلاس های دیگر برنامه و موس
         self.screen = pg.display.set_mode((1800, 900), pg.RESIZABLE)
         pg.display.set_caption('GUI')
         icon = pg.image.load('./icons/webb.ico')
@@ -60,6 +66,7 @@ class GUI:
         self.clock = pg.time.Clock()
         self.a = Thread(target=(self.events))
         self.a.start()
+    # تابع پردازش رویداد های موس و صفحه کلید و توابع کلاس های برنامه
     def events(self):
         distance = vec(0, 0)
         f = False
@@ -207,15 +214,17 @@ class GUI:
             self.sprites.update()
             self.update()
 
+    # تابع بروزرسانی صفحه گرافیکی و آماده کردن کلاس ها برای نمایش
     def update(self):
         self.screen.fill((255, 255, 255))
         self.sprites.draw(self.screen)
         pg.display.flip()
 
+    # اضافه کردن یک کلاس به مجموعه ی کلاس ها
     def add_item(self, item):
         self.sprites.add(item)
 
-
+# کلاس متن
 class Text(pg.sprite.Sprite):
     def __init__(self, text, pos, file, font='arial', size=20, color=(0, 0, 0)):
         pg.sprite.Sprite.__init__(self)
@@ -242,6 +251,7 @@ class Text(pg.sprite.Sprite):
         self.file = file
         self.last = self.image.get_rect()
 
+    # تابع ذخیره اطلاعات متن
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -267,6 +277,7 @@ class Text(pg.sprite.Sprite):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+# کلاس عکس
 class Image(pg.sprite.Sprite):
 
     def __init__(self, img, pos, file):
@@ -283,6 +294,7 @@ class Image(pg.sprite.Sprite):
         self.last.x = self.rect.x
         self.last.y = self.rect.y
 
+    # تابع ذخیره اطلاعات عکس
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -301,6 +313,7 @@ class Image(pg.sprite.Sprite):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+# (کلاس موس(این کلاس با بقیه کلاس ها فرق دارد و گرافیکی نیست
 class Mouse(pg.sprite.Sprite):
 
     def __init__(self):
@@ -311,6 +324,7 @@ class Mouse(pg.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
 
+# کلاس دکمه
 class Button(pg.sprite.Sprite, geometric_class):
     def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14, border_radius = 0):
         self.type = 'button'
@@ -356,6 +370,7 @@ class Button(pg.sprite.Sprite, geometric_class):
         self.last.x = self.rect.x
         self.last.y = self.rect.y
 
+    # تابع ذخیره اطلاعات دکمه
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -380,6 +395,7 @@ class Button(pg.sprite.Sprite, geometric_class):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+# کلاس ورودی
 class Input(pg.sprite.Sprite, geometric_class):
     def __init__(self, path, pos, size, color, border_radius = 0):
         self.type = 'input'
@@ -421,6 +437,7 @@ class Input(pg.sprite.Sprite, geometric_class):
         self.last.x, self.last.y = pos
         self.file = path
 
+    # تابع ذخیره اطلاعات ورودی
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -438,6 +455,7 @@ class Input(pg.sprite.Sprite, geometric_class):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+# کلاس فیلم
 class Movie(pg.sprite.Sprite, geometric_class):
     def __init__(self, m, pos, size):
         self.type = 'movie'
@@ -458,6 +476,7 @@ class Movie(pg.sprite.Sprite, geometric_class):
         self.last = self.image.get_rect()
         self.file = m
 
+    # تابع ذخیره اطلاعات فیلم
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -475,6 +494,7 @@ class Movie(pg.sprite.Sprite, geometric_class):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 
+# این کلاس کلاس زیر مجموعه ی جدول است
 class Box(pg.sprite.Sprite):
     def __init__(self, text, pos):
         pg.sprite.Sprite.__init__(self)
@@ -507,7 +527,7 @@ class Box(pg.sprite.Sprite):
         pg.draw.line(self.image, (0, 0, 0), (t.get_width(), 0), (t.get_width(), self.image.get_height()),1)
 
 
-
+# کلاس جدول
 class Table(pg.sprite.Sprite):
     def __init__(self, pos, size, heads, file):
         pg.sprite.Sprite.__init__(self)
@@ -570,6 +590,7 @@ class Table(pg.sprite.Sprite):
         for i in range(y):
             for j in range(x):
                 self.max = max(self.max, self.boxes[i][j].txt.get_width() + 20)
+    # تابع ذخیره اطلاعات جدول
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -641,6 +662,7 @@ class Table(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.last.x, self.last.y
 
+# کلاس پیوند
 class Link(pg.sprite.Sprite):
     def __init__(self, text, pos, font, size, color, file):
         pg.sprite.Sprite.__init__(self)
@@ -668,6 +690,7 @@ class Link(pg.sprite.Sprite):
         self.file = file
         self.last = self.image.get_rect()
 
+    # تابع ذخیره اطلاعات پیوند
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
             try:
@@ -692,6 +715,6 @@ class Link(pg.sprite.Sprite):
 
             self.last.x = self.rect.x
             self.last.y = self.rect.y
-
+# رنگ های پیش فرض برنامه
 dictionary = {'red':(255, 0, 0),
  'green':(0, 255, 0),  'blue':(0, 0, 255),  'black':(1, 1, 1),  'white':(255, 255, 255),  'yellow':(255, 255, 0)}
