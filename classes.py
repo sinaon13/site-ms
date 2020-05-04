@@ -43,7 +43,7 @@ def set_border(surface,rect,color,radius=0):
     return surface.blit(rectangle,pos)
 
 # کلاس جامعی که شناسه قابلیت تغییر اندازه یک صفحه را می دهد
-class geometric_class(object): # Internal Class
+class geometric_class(object): # Internal SubClass
     def __init__(self):
         self.geometric = True
 
@@ -513,12 +513,12 @@ class Box(pg.sprite.Sprite):
         self.rect.y += 10
         self.indexing = [0, 0]
         self.ind = 0
-    def set_text(self, text, font):
+    def set_text(self, text, font): # تابع آماده کننده متن برای نمایش
         self.text = text
         self.txt = font.render(text, True, (0, 0, 0))
         self.image.blit(self.txt, (0, 0))
         self.image.set_colorkey((255, 255, 255))
-    def update(self):
+    def update(self): # نمایش متن و نشانگر روی صفحه
         self.image.fill((255, 255, 255))
         self.txt = self.f.render(self.text, True, (0, 0, 0))
         self.image.blit(self.txt, (0, 0))
@@ -565,7 +565,7 @@ class Table(pg.sprite.Sprite):
         self.file = file
 
 
-    def init_table(self, x, y):
+    def init_table(self, x, y): # تابع مقدار دهنده اولیه جدول
         l = []
         self.max = 0
         self.high = 0
@@ -582,7 +582,7 @@ class Table(pg.sprite.Sprite):
                 a.append(b)
             l.append(a)
         return l;
-    def get_geo(self, x, y):
+    def get_geo(self, x, y): # تابع محاسبه اندازه جدول
         self.max = 0
         for i in self.heads:
             b = Box(i, (0, 0))
