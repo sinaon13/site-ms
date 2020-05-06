@@ -8,13 +8,12 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 pg.font.init()
 vec = pg.math.Vector2
-
+# کلاس اولیه برنامه
 class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.sina = khar()
-
+    # تابع مقدار دهی گرافیکی اولیه کلاس
     def initUI(self):
         lbl1 = QLabel('Site Maker', self)
         lbl1.move(200, 50)
@@ -29,7 +28,7 @@ class Example(QWidget):
         start.move(190, 160)
         start.clicked.connect(self.s)
         self.show()
-
+    # تابع پردازشگر رویداد بسته شدن برنامه
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Sure?', 'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
@@ -38,40 +37,15 @@ class Example(QWidget):
             sys.exit()
         else:
             event.ignore()
-
     def center(self):
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
+    # تابع اجرا کننده صفحه اصلی برنامه
     def s(self):
         self.page = page()
-
-
-class khar(QMainWindow):
-
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        self.statusBar().showMessage('Site Builder')
-        self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('Statusbar')
-        self.show()
-
-
-class khar(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-
-    def initUI(self):
-        self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('./icons/webb.png'))
-
+# کلاس راهنمای کاربر
 class Hint(QWidget):
     def __init__(self, path):
         super().__init__()
@@ -89,51 +63,48 @@ class Hint(QWidget):
         self.label.setGeometry(0,0,pixmap.width(),pixmap.height())
         self.show()
 
-
+#کلاس اصلی
 class page(QMainWindow, QWidget):
-
+    # تابع ایجاد کننده صفحه نوشتن برای ساختن متن
     def red(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 't'
         self.hint = Hint('.\\hints\\text.png')
-
+    # تابع اضافه کننده عکس در صفحه
     def blue(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
                                             '.', "JPEG files (*.jpg *.jpeg);;PNG files (*.png)")
         imagePath = fname[0]
         self.d = 'i'
         self.done(imagePath)
-
+    # تابع اضافه کننده فیلم در صفحه
     def vid(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
                                             '.', "MP4 files (*.mp4);;MKV files (*.mkv)")
         imagePath = fname[0]
         self.d = 'v'
         self.done(imagePath)
-
-
+    # تابع ایجاد کننده صفحه نوشتن برای اضافه کردن جدول در صفحه
     def table(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'ta'
         self.hint = Hint('.\\hints\\table.png')
 
-
+    # تابع ایجاد کننده صفحه نوشتن برای اضافه کردن پیوند در صفحه
     def link(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'l'
 
-
-
-
+    # تابع ایجاد کننده صفحه نوشتن برای اضافه کردن دکمه در صفحه
     def button(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
         self.d = 'b'
         self.hint = Hint('.\\hints\\button.png')
-
+    # تابع حذف کننده یک کلاس از صفحه
     def delete(self):
         doc = self.textedit.document()
         block = doc.begin()
@@ -149,10 +120,10 @@ class page(QMainWindow, QWidget):
                     sprite.kill()
                     self.gui.sprites.remove(sprite)
                     break
-
+    # تابع کامپایل کردن همه ی کلاس ها به سایت
     def compile(self):
         os.system("py html."+ open("info.ini", 'r').readline() +" --file " + self.projection)
-
+    # تابع اضافه کننده کلاس مورد نظر به صفحه و ذخیره اطلاعات کلاس
     def done(self, a = ""):
         if self.d != 'i' and self.d != 'v' and self.d != 'p':
             doc = self.textedit.document()
@@ -259,7 +230,7 @@ class page(QMainWindow, QWidget):
         if self.d != 'p':
             self.w.write(p)
             self.w.close()
-
+    # تابع باز کننده پروژه های قبلی
     def load(self):
         self.gui.sprites = pg.sprite.Group()
         file = str(QFileDialog.getExistingDirectory(self, "Select project .site"))
@@ -351,7 +322,7 @@ class page(QMainWindow, QWidget):
                     self.gui.add_item(Link(l[1:], (int(lines[-1].split()[0]), int(lines[-1].split()[-1])), lines[-5], int(lines[-4]), dictionary[lines[-3][:-1]], os.path.join(file, i)))
                     self.gui.update()
         self.projection = file
-
+    # تابع ایجاد کننده یک پروژه جدید
     def create(self):
         self.gui.sprites = pg.sprite.Group()
         fname, t = QFileDialog.getSaveFileName(self, 'New Project',"")
@@ -365,7 +336,7 @@ class page(QMainWindow, QWidget):
         self.sele = None
         self.projection = ''
         self.initUI()
-
+    # تابع مقدار دهی گرافیکی اولیه کلاس
     def initUI(self):
         QToolTip.setFont(QFont('SansSerif', 10))
         sina = QAction(QIcon('./icons/web.png'), 'text', self)
@@ -422,7 +393,7 @@ class page(QMainWindow, QWidget):
         self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Site Maker')
         self.show()
-
+    # تابع پردازشگر رویداد بستن
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Sure?', 'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
@@ -430,7 +401,7 @@ class page(QMainWindow, QWidget):
             sys.exit()
         else:
             event.ignore()
-
+    # تابع ایجاد کننده صفحه نوشتن برای اضافه کردن پیوند در صفحه
     def inpt(self):
         self.textedit = QTextEdit(self)
         self.setCentralWidget(self.textedit)
