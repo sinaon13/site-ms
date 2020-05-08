@@ -310,7 +310,6 @@ class Mouse(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
-
 # کلاس دکمه
 class Button(pg.sprite.Sprite, geometric_class):
     def __init__(self, file, text, color, pos, size, font = 'arial', font_size = 14, border_radius = 0):
@@ -362,7 +361,6 @@ class Button(pg.sprite.Sprite, geometric_class):
         self.last = self.image.get_rect()
         self.last.x = self.rect.x
         self.last.y = self.rect.y
-
     # تابع ذخیره اطلاعات دکمه
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
@@ -389,7 +387,6 @@ class Button(pg.sprite.Sprite, geometric_class):
                 pass
             self.last.x = self.rect.x
             self.last.y = self.rect.y
-
 # کلاس ورودی
 class Input(pg.sprite.Sprite, geometric_class):
     def __init__(self, path, pos, size, color, border_radius = 0):
@@ -434,7 +431,6 @@ class Input(pg.sprite.Sprite, geometric_class):
         self.last = self.image.get_rect()
         self.last.x, self.last.y = pos
         self.file = path
-
     # تابع ذخیره اطلاعات ورودی
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
@@ -452,7 +448,6 @@ class Input(pg.sprite.Sprite, geometric_class):
             except:pass
             self.last.x = self.rect.x
             self.last.y = self.rect.y
-
 # کلاس فیلم
 class Movie(pg.sprite.Sprite, geometric_class):
     def __init__(self, m, pos, size):
@@ -476,7 +471,6 @@ class Movie(pg.sprite.Sprite, geometric_class):
         self.rect.x , self.rect.y = pos
         self.last = self.image.get_rect()
         self.file = m
-
     # تابع ذخیره اطلاعات فیلم
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
@@ -496,7 +490,6 @@ class Movie(pg.sprite.Sprite, geometric_class):
             except:pass
             self.last.x = self.rect.x
             self.last.y = self.rect.y
-
 # این کلاس کلاس زیر مجموعه ی جدول است
 """ hash tags from here"""
 class Box(pg.sprite.Sprite):
@@ -532,8 +525,6 @@ class Box(pg.sprite.Sprite):
         t = self.f.render(self.text[:self.pointer], True, (0, 0, 0))
         self.image.set_colorkey((255, 255, 255))
         pg.draw.line(self.image, (0, 0, 0), (t.get_width(), 0), (t.get_width(), self.image.get_height()),1)
-
-
 # کلاس جدول
 class Table(pg.sprite.Sprite):
     def __init__(self, pos, size, heads, file):
@@ -573,10 +564,7 @@ class Table(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = pos
         self.last = self.image.get_rect()
-
         self.file = file
-
-
     def init_table(self, x, y): # تابع مقدار دهنده اولیه جدول
         l = []
         self.max = 0
@@ -676,7 +664,6 @@ class Table(pg.sprite.Sprite):
             column += 1
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.last.x, self.last.y
-
 # کلاس پیوند
 class Link(pg.sprite.Sprite):
     def __init__(self, text, pos, font, size, color, file):
@@ -706,7 +693,6 @@ class Link(pg.sprite.Sprite):
         self.rect.x, self.rect.y = pos
         self.file = file
         self.last = self.image.get_rect()
-
     # تابع ذخیره اطلاعات پیوند
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
@@ -720,7 +706,6 @@ class Link(pg.sprite.Sprite):
                         for i in lines:
                             if i != lines[-1]:
                                 x = i[:-1]
-
                             else:
                                 x = i
                             F.write(x)
@@ -731,7 +716,6 @@ class Link(pg.sprite.Sprite):
                     f.close()
             except:
                 pass
-
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 # رنگ های پیش فرض برنامه
