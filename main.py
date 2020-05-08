@@ -51,7 +51,7 @@ class Hint(QWidget):
         super().__init__()
         self.image = path
         self.initUI()
-
+    # تابع مقدار دهی گرافیکی اولیه کلاس
     def initUI(self):
         self.setWindowTitle('Hint')
         self.setWindowIcon(QIcon('.\\icons\\help.png'))
@@ -126,6 +126,7 @@ class page(QMainWindow, QWidget):
     # تابع اضافه کننده کلاس مورد نظر به صفحه و ذخیره اطلاعات کلاس
     def done(self, a = ""):
         if self.d != 'i' and self.d != 'v' and self.d != 'p':
+            # گرفتن اطلاعات از صفحه نوشتن
             doc = self.textedit.document()
             block = doc.begin()
             lines = [block.text()]
@@ -135,6 +136,7 @@ class page(QMainWindow, QWidget):
         if self.d != 'p':
             border_radius = 0
             if self.projection != '':
+                # ساختن فایلی برای ذخیره اطلاعات
                 if self.d != 'i' and self.d != 'v':
                     file = os.path.join(self.projection ,lines[0]) + '.txt'
                 else:
@@ -143,6 +145,7 @@ class page(QMainWindow, QWidget):
                 self.w = open(file, 'w')
             else:
                 return
+        # دادن شناسه به فایل ذخیره اطلاعات
         if self.d == 'i':
             p = a + '\n'
         elif self.d == 't':
@@ -160,6 +163,7 @@ class page(QMainWindow, QWidget):
         elif self.d== 'l':
             p = lines[0] +'.link' + '\n'
         else:pass
+        # چک کردن حالت پیش فرض
         try:
             color = lines[-1]
             size = lines[-2]
@@ -172,6 +176,7 @@ class page(QMainWindow, QWidget):
                 txt = lines[1:-1]
         except:pass
         if self.d != 'i' and self.d != 'v' and self.d != 'p':
+            # جمع آوری اطلاعات کلاس مورد نظر
             for i in range(1, len(lines)):
                 if lines[i] == '':
                     continue
@@ -194,6 +199,7 @@ class page(QMainWindow, QWidget):
                 if i != len(lines) - 1:
                     p += '\n'
         if self.d == 'p':
+            # مقدار دهی آدرس پروژه و چک کردن یکتایی آن در آدرس مورد نظر
             self.projection = a
             try:
                 os.mkdir(a)
@@ -206,6 +212,7 @@ class page(QMainWindow, QWidget):
                     self.projection = ''
                     return
             return
+        # ایجاد کلاس های گرافیکی در صفحه
         elif self.d == 't':
             self.gui.add_item(Text(txt, (randint(1, 100), randint(1, 100)), file, font, int(size), dictionary[color]))
             self.gui.update()
@@ -228,12 +235,16 @@ class page(QMainWindow, QWidget):
             self.gui.add_item(Link(txt[1:], (randint(1, 100), randint(1, 100)), font, int(size), dictionary[color], file))
             self.gui.update()
         if self.d != 'p':
+            # نوشتن و ذخیره اطلاعات در فایل مورد نظر
             self.w.write(p)
             self.w.close()
     # تابع باز کننده پروژه های قبلی
     def load(self):
+        # مقدار دهی دوباره به صفحه ی گرافیکی
         self.gui.sprites = pg.sprite.Group()
+        # گرفتن ادرس پروژه موردنظر
         file = str(QFileDialog.getExistingDirectory(self, "Select project .site"))
+        # گرفتن تمام فایل های اطلاعاتی داخل پروژه و ساختن کلاس های گرافیکی با آن
         for i in os.listdir(file):
             if i[-4:] == '.txt':
                 with open(os.path.join(file, i), 'r') as f:
@@ -339,6 +350,7 @@ class page(QMainWindow, QWidget):
     # تابع مقدار دهی گرافیکی اولیه کلاس
     def initUI(self):
         QToolTip.setFont(QFont('SansSerif', 10))
+        # ساختن و مقدار دهی ماژول های برنامه
         sina = QAction(QIcon('./icons/web.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
@@ -378,6 +390,7 @@ class page(QMainWindow, QWidget):
         cmple.setStatusTip('compile .site to .html')
         self.statusBar()
         toolbar = self.addToolBar('site')
+        # اضافه کردن ماژول ها به صفحه اصلی
         toolbar.addAction(new)
         toolbar.addAction(load)
         toolbar.addAction(sina)
