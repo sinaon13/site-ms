@@ -184,8 +184,8 @@ for i in inp:
     top : ''' + i[-1] + '''px;
     width:''' + i[-3].split()[0]+ '''px;
     height: '''+ i[-3].split()[-1] + '''px;
-    color:'''+ i[-7][:-1]+''';
-    border: 2px solid black;
+
+    border: 2px solid '''+ i[-7][:-1]+''';
 }''')
     fl+=1
 fl=0
