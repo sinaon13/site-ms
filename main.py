@@ -76,6 +76,7 @@ class page(QMainWindow, QWidget):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
                                             '.', "JPEG files (*.jpg *.jpeg);;PNG files (*.png)")
         imagePath = fname[0]
+        imagePath.replace('/', '\\')
         self.d = 'i'
         self.done(imagePath)
     # تابع اضافه کننده فیلم در صفحه
@@ -83,6 +84,7 @@ class page(QMainWindow, QWidget):
         fname = QFileDialog.getOpenFileName(self, 'Open file',
                                             '.', "MP4 files (*.mp4);;MKV files (*.mkv)")
         imagePath = fname[0]
+        imagePath.replace('/', '\\')
         self.d = 'v'
         self.done(imagePath)
     # تابع ایجاد کننده صفحه نوشتن برای اضافه کردن جدول در صفحه
@@ -141,7 +143,6 @@ class page(QMainWindow, QWidget):
                     file = os.path.join(self.projection ,lines[0]) + '.txt'
                 else:
                     file = os.path.join(self.projection ,a.split('/')[-1]) + '.txt'
-                    print(a.split('/')[-1])
                 self.w = open(file, 'w')
             else:
                 return
@@ -157,7 +158,7 @@ class page(QMainWindow, QWidget):
         elif self.d == 'p':
             a += '.site'
         elif self.d == 'v':
-            p = a.split('\\')[-1] + '.vid' +'\n'
+            p = a.split('/')[-1] + '.vid' +'\n'
         elif self.d == 'ta':
             p = lines[0] + '.tab'+'\n'
         elif self.d== 'l':
@@ -226,7 +227,7 @@ class page(QMainWindow, QWidget):
             self.gui.add_item(Input(file, (randint(1, 100), randint(1, 100)), (300, 40), dictionary[lines[1]], border_radius))
             self.gui.update()
         elif self.d == 'v':
-            self.gui.add_item(Movie(file, (randint(1, 100), randint(1, 100)), (300, 200)))
+            self.gui.add_item(Movie(a, file, (randint(1, 100), randint(1, 100)), (600, 400)))
             self.gui.update()
         elif self.d == 'ta':
             self.gui.add_item(Table((randint(1, 100), randint(1, 100)) , int(lines[-1]), lines[2:-2], file))
@@ -244,6 +245,7 @@ class page(QMainWindow, QWidget):
         self.gui.sprites = pg.sprite.Group()
         # گرفتن ادرس پروژه موردنظر
         file = str(QFileDialog.getExistingDirectory(self, "Select project .site"))
+        file = file.replace('/', '\\')
         # گرفتن تمام فایل های اطلاعاتی داخل پروژه و ساختن کلاس های گرافیکی با آن
         for i in os.listdir(file):
             if i[-4:] == '.txt':
@@ -337,6 +339,7 @@ class page(QMainWindow, QWidget):
     def create(self):
         self.gui.sprites = pg.sprite.Group()
         fname, t = QFileDialog.getSaveFileName(self, 'New Project',"")
+        fname = fname.replace('/', '\\')
         self.d = 'p'
         print(fname)
         self.done(fname)

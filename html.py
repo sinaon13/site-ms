@@ -224,7 +224,7 @@ for i in video:
     left:'''+i[2]+'''px;
     top:'''+ i[3]+'''px;
     width:''' + i[1].split()[0] +'''px;
-    height:''' + i[1].split()[0] +'''px;
+    height:''' + i[1].split()[1] +'''px;
 }''')
 ht.write('''</style>
 </head>

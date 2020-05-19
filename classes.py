@@ -1,7 +1,28 @@
 import pygame as pg
 from threading import Thread
 import os, sys
+import cv2
+from random import choice
 vec = pg.math.Vector2
+# تابع دریافت کننده همه ی فریم های یک فیلم
+def get_frames(vid):
+    l = []
+    success, image = vid.read()
+    while success:
+        l.append(image)
+        success, image = vid.read()
+    return l
+# تابع کانورتور صفحه ی سی وی به پایگیم
+def cv2_to_pygame_surface(image):
+    s = pg.Surface((len(image[0]), len(image)))
+    i = 0
+    for sheet in image:
+        j = 0
+        for pixel in sheet:
+            s.set_at((j, i), (pixel[2], pixel[1], pixel[0]))
+            j += 1
+        i += 1
+    return s
 # تابع گرد کردن دور صفحه ها
 def set_border(surface,rect,color,radius=0):
     rect         = pg.Rect(rect)
@@ -450,22 +471,16 @@ class Input(pg.sprite.Sprite, geometric_class):
             self.last.y = self.rect.y
 # کلاس فیلم
 class Movie(pg.sprite.Sprite, geometric_class):
-    def __init__(self, m, pos, size):
+    def __init__(self,mov, m, pos, size):
         self.type = 'movie'
         pg.sprite.Sprite.__init__(self)
         self.w, self.h = size
         geometric_class.__init__(self)
+        vidcap = cv2.VideoCapture(mov)
         # ایجاد صفحه نمایش کلاس
-        self.image = pg.Surface((self.w, self.h))
-        self.image.fill((255, 255, 255))
-        self.color = (100, 100, 100)
-        pg.draw.rect(self.image, self.color, (0, 0, self.w, self.h), 5)
-        # قرار دادن اسم فیلم داخل صفحه کلاس
-        f = pg.font.Font(pg.font.match_font('arial'), 30)
-        txt = f.render(m[:-4].split('\\')[-1], True, (0, 0, 0))
-        rect = txt.get_rect()
-        rect.center = self.w // 2, self.h // 2
-        self.image.blit(txt, rect)
+        self.image = cv2_to_pygame_surface(choice(get_frames(vidcap)))
+        self.image = pg.transform.scale(self.image, (self.w, self.h))
+        pg.draw.rect(self.image, (100, 100, 100), (0, 0, self.w, self.h), 5)
         # ایجاد ماژول مختصات به کلاس
         self.rect = self.image.get_rect()
         self.rect.x , self.rect.y = pos
@@ -474,20 +489,18 @@ class Movie(pg.sprite.Sprite, geometric_class):
     # تابع ذخیره اطلاعات فیلم
     def update(self):
         if self.last.x != self.rect.x or self.last.y != self.rect.y:
-            try:
-                with open(self.file, 'r') as f:
-                    # گرفتن اطلاعات قبلی فایل
-                    lines = f.readlines()[:1]
-                    lines[-1] += '\n'
-                    with open(self.file, 'w') as F:
-                        for i in lines:
-                            F.write(i)
-                        # اضافه کردن اطلاعات جدید
-                        F.write(str(int(self.w)) + ' ' + str(int(self.h)) + '\n')
-                        F.write(str(self.rect.x) + ' ' + str(self.rect.y))
-                        F.close()
-                    f.close()
-            except:pass
+            with open(self.file, 'r') as f:
+                # گرفتن اطلاعات قبلی فایل
+                lines = f.readlines()[:1]
+                lines[-1] += '\n'
+                with open(self.file, 'w') as F:
+                    for i in lines:
+                        F.write(i)
+                    # اضافه کردن اطلاعات جدید
+                    F.write(str(int(self.w)) + ' ' + str(int(self.h)) + '\n')
+                    F.write(str(self.rect.x) + ' ' + str(self.rect.y))
+                    F.close()
+                f.close()
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 # این کلاس کلاس زیر مجموعه ی جدول است
