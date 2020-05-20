@@ -354,40 +354,51 @@ class page(QMainWindow, QWidget):
     def initUI(self):
         QToolTip.setFont(QFont('SansSerif', 10))
         # ساختن و مقدار دهی ماژول های برنامه
+        # ساختن ماژول متن
         sina = QAction(QIcon('./icons/web.png'), 'text', self)
         sina.setStatusTip('Text Box')
         sina.triggered.connect(self.red)
+        # ساختن ماژول عکس
         hasan = QAction(QIcon('./icons/img.png'), 'image', self)
         hasan.setStatusTip('Add Image')
         hasan.triggered.connect(self.blue)
+        # ساختن ماژول فیلم
         vid=QAction(QIcon('./icons/vid.png'), 'video', self)
         vid.setStatusTip('Add Video')
         vid.triggered.connect(self.vid)
+        # ساختن ماژول دکمه
         button = QAction(QIcon('./icons/button.png'), 'button', self)
         button.setStatusTip('Add Button')
         button.triggered.connect(self.button)
+        # ساختن ماژول جدول
         table=QAction(QIcon('./icons/table.png'), 'table', self)
         table.setStatusTip('Add Table')
         table.triggered.connect(self.table)
+        # ساختن ماژول پیوند
         link=QAction(QIcon('./icons/link.png'), 'link',self)
         link.setStatusTip('Make Link')
         link.triggered.connect(self.link)
+        # ایجاد ماژول ذخیر اطلاعات
         save = QAction(QIcon('./icons/save.png'), 'save', self)
         save.setStatusTip('Save')
         save.triggered.connect(self.done)
-        gg = QAction(QIcon('./icons/exit24.png'), 'undo', self)
+        # دکمه پاک کننده اطلاعات خواسته شده
         delete = QAction(QIcon('./icons/delete.png'), 'delete', self)
         delete.triggered.connect(self.delete)
         delete.setStatusTip('Delete file')
+        # دکمه باز کننده پروژه های قبلی
         load = QAction(QIcon('./icons/open.png'), 'open', self)
         load.triggered.connect(self.load)
         load.setStatusTip('open previous projects')
+        # دکمه ایجاد کننده یک پروژه جئدید
         new = QAction(QIcon('./icons/new.png'), 'New Project', self)
         new.setStatusTip('create a project')
         new.triggered.connect(self.create)
+        # ساختن ماژول ورودی
         inp = QAction(QIcon('./icons/input.png'), 'input box', self)
         inp.triggered.connect(self.inpt)
         inp.setStatusTip('add input box')
+        # دکمه کامپایل پروژه به یک سایت
         cmple = QAction(QIcon("./icons/compile.png"), 'Build', self)
         cmple.triggered.connect(self.compile)
         cmple.setStatusTip('compile .site to .html')

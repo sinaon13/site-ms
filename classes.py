@@ -129,23 +129,29 @@ class GUI:
                 # پردازش اتفاق برخورد موس با یکی از دیگر کلاس ها در هنگام کلیک شدن
                 writing = None
                 hits = pg.sprite.spritecollide(self.mouse, self.sprites, False)
+                # پردازش بر خورد موس با یک جدول
                 if hits:
                     for hit in hits:
                         if "boxes" in dir(hit):
                             chosen = hit
                             for i in chosen.boxes:
+                                # قرار دادن خانه های جدول در مختصات فرضی در صفحه
                                 for j in i:
                                     j.rect.x, j.rect.y = j.rect.x + chosen.rect.x ,j.rect.y + chosen.rect.y
+                                # پردازش برخورد موس با یکی از خانه های جدول
                                 h = pg.sprite.spritecollide(self.mouse, i, False)
+                                # بر گرداندن مختصات خانه های جدول به حالت قبلی
                                 for j in i:
                                     j.rect.x, j.rect.y = j.rect.x - chosen.rect.x ,j.rect.y - chosen.rect.y
                                     j.pointer = len(j.text)
                                     j.set_text(j.text, j.f)
+                                # گرفتن خانه کلیک شده توسط موس
                                 if h:
                                     writing = h[0]
                                 continue
                             if writing:
                                 continue
+                # پردازش یک کلاس غیر خانه جدول
                 if hits:
                     distance.x = self.mouse.rect.x - hits[0].rect.x
                     distance.y = self.mouse.rect.y - hits[0].rect.y
@@ -162,57 +168,69 @@ class GUI:
                     else:
                         # تغییر اندازه کلاس با موس
                         if(distance.x < 4):
+                            # تغییر اندازه صفحه نمایش کلاس ایجاد شده
                             chosen.w -= self.mouse.rect.x - (chosen.rect.x + distance.x)
                             chosen.rect.x = self.mouse.rect.x - distance.x
                             x, y = chosen.rect.x, chosen.rect.y
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
+                            # مقدار دهی دوباره کلاس
                             if chosen.type == 'button':
                                 chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
+                            # قرار دادن کلاس در مکان قبلی
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.x > chosen.w - 4):
+                            # تغییر اندازه صفحه نمایش کلاس ایجاد شده
                             chosen.w += self.mouse.rect.x - (chosen.rect.x + distance.x)
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
+                            # مقدار دهی دوباره کلاس
                             if chosen.type == 'button':
                                 chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
+                            # قرار دادن کلاس در مکان قبلی
                             x, y = chosen.rect.x, chosen.rect.y
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.y < 4):
+                            # تغییر اندازه صفحه نمایش کلاس ایجاد شده
                             chosen.h -= self.mouse.rect.y - (chosen.rect.y + distance.y)
                             chosen.rect.y = self.mouse.rect.y - distance.y
                             x, y = chosen.rect.x, chosen.rect.y
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
+                            # مقدار دهی دوباره کلاس
                             if chosen.type == 'button':
                                 chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
+                            # قرار دادن کلاس در مکان قبلی
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                         if(distance.y > chosen.h - 4):
+                            # تغییر اندازه صفحه نمایش کلاس ایجاد شده
                             chosen.h += self.mouse.rect.y - (chosen.rect.y + distance.y)
                             x, y = chosen.rect.x, chosen.rect.y
                             distance.x = self.mouse.rect.x - chosen.rect.x
                             distance.y = self.mouse.rect.y - chosen.rect.y
+                            # مقدار دهی دوباره کلاس
                             if chosen.type == 'button':
                                 chosen.__init__(chosen.file, chosen.text, chosen.color, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), 'arial', 14, chosen.border_radius)
                             elif chosen.type == 'input':
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)), chosen.color, chosen.border_radius)
                             else:
                                 chosen.__init__(chosen.file, (chosen.rect.x, chosen.rect.y), (int(chosen.w), int(chosen.h)))
+                            # قرار دادن کلاس در مکان قبلی
                             chosen.rect = chosen.image.get_rect()
                             chosen.rect.x, chosen.rect.y = x, y
                 else:
@@ -504,7 +522,6 @@ class Movie(pg.sprite.Sprite, geometric_class):
             self.last.x = self.rect.x
             self.last.y = self.rect.y
 # این کلاس کلاس زیر مجموعه ی جدول است
-""" hash tags from here"""
 class Box(pg.sprite.Sprite):
     def __init__(self, text, pos):
         pg.sprite.Sprite.__init__(self)
@@ -623,6 +640,7 @@ class Table(pg.sprite.Sprite):
         try:
             # ذخیره دیگر اطلاعات جدول
             with open(self.file[:-4] + '.tab.data', 'w') as f:
+                # گرفتن اطلاعات هر خانه از جدول
                 for i in self.boxes:
                     for j in i[:-1]:
                         if ' ' in j.text:
@@ -651,9 +669,11 @@ class Table(pg.sprite.Sprite):
                 f.close()
         except:pass
         # بروز رسانی اطلاعات جدید وارد شده در جدول توسط کاربر
+        # مقدار دهی دوباره صفحه نمایش
         self.get_geo(len(self.boxes[0]), len(self.boxes))
         self.image = pg.Surface((self.max * (len(self.boxes[0])), self.high * (len(self.boxes) + 1)))
         self.image.fill((255, 255, 255))
+        # کشیدن خانه های جدول
         pg.draw.line(self.image, (0, 0, 0), (0, 0), (0, self.image.get_height()))
         for i in range(1, len(self.boxes[0]) + 1):
             pg.draw.line(self.image, (0, 0, 0), (self.image.get_width() // (len(self.boxes[0])) * i, 0), (self.image.get_width() // (len(self.boxes[0])) * i,self.image.get_height()), 3)
@@ -662,12 +682,14 @@ class Table(pg.sprite.Sprite):
             pg.draw.line(self.image, (0, 0, 0), (0, self.image.get_height() // (len(self.boxes) + 1) * i), (self.image.get_width(), self.image.get_height() // (len(self.boxes) + 1) * i), 3)
         position = [self.image.get_width() // (len(self.boxes[0])), self.image.get_height() // (len(self.boxes) + 1)]
         column = 0
+        # قرار دادن تیتر ها در جدول
         for text in self.heads:
             i = Box(text, (0, 0))
             i.rect.x, i.rect.y = position[0] * column + 5, 5
             self.image.blit(i.image, i.rect)
             column += 1
         column = 1
+        # قرار دادن خانه های دیگر جدول
         for text in self.boxes:
             sheet = 0
             for i in text:
@@ -675,6 +697,7 @@ class Table(pg.sprite.Sprite):
                 self.image.blit(i.image, i.rect)
                 sheet += 1
             column += 1
+        # بروز رسانی مختصات جدول
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = self.last.x, self.last.y
 # کلاس پیوند
