@@ -18,12 +18,14 @@ video=[]
 tab=[]
 data = []
 videoname = []
+#function for find png file and open it or open txt
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
     r=open(file,'r').readlines()
     if r[0][-4:][:-1] == 'txt' :
         txt.append(r[1:-1]+r[-1].split())
+#get all of files and save in list
 def get_files():
     listOfFiles = os.listdir('.')
     l = []
@@ -34,12 +36,13 @@ def get_files():
     return l
 im = get_files()
 btn_name = []
+#open txt file and read it and find btn and run that work
 for file in glob.glob("*.txt"):
     r=open(file,'r').readlines()
     if r[0][-4:][:-1] == 'btn' :
         btn.append(r[1:-1]+r[-1].split())
         btn_name.append(r[0][:-1])
-
+#open txt file and find inp in that and run that work
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -47,7 +50,7 @@ for file in glob.glob("*.txt"):
     if r[0][-4:][:-1] == 'inp' :
         inp.append(r[1:-1]+r[-1].split())
 
-
+#open txt file and find vid in that and run that work
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -56,7 +59,7 @@ for file in glob.glob("*.txt"):
         video.append(r[1:-1] + r[-1].split())
         videoname.append(r[0][:-5])
 
-
+#open txt file and find data in that and run that work
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
@@ -64,16 +67,16 @@ for file in glob.glob("*.txt"):
     if r[0][-5:][:-1] == '.tab' :
         tab.append(r[1:-1] + r[-1].split())
         data.append(r[0][:-1] + '.data')
-
 link=[]
+#open txt file and find link in that and run that work
 for file in glob.glob("*.txt"):
     if ".png" in file:
         continue
     r=open(file,'r').readlines()
     if r[0][-6:][:-1] == '.link' :
         link.append(r[1:-1] + r[-1].split())
-
 img = []
+#get all of the images 
 for i in im:
     q = []
     for j in open(i, 'r').readlines():
@@ -89,6 +92,7 @@ print(video)
 print(tab)
 print(inp)
 scription = []
+?
 for i in btn:
     if i[-5][-4:-1] == '.js':
         if(i[-5][:-1] not in scription):
@@ -121,6 +125,7 @@ ht.write('''
 txt2=[]
 img2=[]
 fl=1
+#convert txt with their angle(in html)
 for i in txt:
     txt2.append('p'+str(fl))
 
@@ -135,6 +140,7 @@ for i in txt:
 
 ''')
     fl+=1
+#set position text(in html)
 fl = 0
 for i in img:
     img2.append('i'+str(fl))
@@ -148,6 +154,7 @@ for i in img:
 ''')
     fl += 1
 fl = 0
+#set in btn angle of text
 for i in btn:
     btn2.append('b' + str(fl))
     w = i[-3].split()[0]
@@ -175,6 +182,7 @@ fl = 0
 ##        height: ''' + tab[i][-1] + ''' px;\n''')
 ##        fl+=1
 fl=0
+#set in inp angle of text
 for i in inp:
     inp2.append('in' + str(fl))
     ht.write('.in' + str(fl) + '''{
@@ -189,6 +197,7 @@ for i in inp:
 }''')
     fl+=1
 fl=0
+##set in tab angle of text
 for i in tab:
     ht.write('''\ntable {
       font-family: arial, sans-serif;
@@ -206,6 +215,7 @@ for i in tab:
     ''')
     fl+= 1
 fl=0
+##set in link angle of text
 for i in link:
     link2.append('''link'''+str(fl))
     ht.write('''\n.link'''+str(fl)+'''{
@@ -217,6 +227,7 @@ for i in link:
     color:'''+i[4]+''';}''')
     fl+=1
 fl = 0
+#set in video angle of text
 for i in video:
     vid2.append('vid' + str(fl))
     ht.write('.vid'+str(fl) + '''{
@@ -224,12 +235,13 @@ for i in video:
     left:'''+i[2]+'''px;
     top:'''+ i[3]+'''px;
     width:''' + i[1].split()[0] +'''px;
-    height:''' + i[1].split()[1] +'''px;
+    height:''' + i[1].split()[0] +'''px;
 }''')
 ht.write('''</style>
 </head>
 <body>
 ''')
+#push texts in html page
 for i in range(len(txt2)):
     clas='class="'+txt2[i]+'"'
     ht.write('<p '+clas+'>')
@@ -237,28 +249,31 @@ for i in range(len(txt2)):
         ht.write(j)
         ht.write('<br>')
     ht.write('</p>')
-
+#push images in html page
 for i in range(len(img2)):
     clas='class="'+img2[i]+'"'
     ht.write('<img '+clas+' src = "' + img[i][0] +'">')
-
+#push buttons in html page
 for i in range(len(btn2)):
     clas='class="'+btn2[i]+'"'
     ht.write('<button '+clas+' onclick = "' + btn[i][-7].split(':')[-1][:-1] + '">' +btn_name[i][:-3]+ '</button>')
-
+#push inputs in html page
 for i in range(len(inp2)):
     clas='class="'+inp2[i]+'"'
     ht.write('<input '+clas+' type = "' + inp[i][-5][:-1] + '">')
+#push videos in html page
 for i in range(len(vid2)):
     clas='class="'+vid2[i]+'"'
     ht.write('''<video '''+clas+''' controls>
     <source src="'''+videoname[i]+'''" type="video/''' + videoname[i].split('.')[-1] +'''">
     </video>
     ''')
+#push links in html page
 for i in range(len(link2)):
     clas='class="'+link2[i]+'"'
     ht.write('\n<a href="'+link[i][0]+'" ' +clas+'>'+link[i][1]+'</a>')
 sf=-1
+#push tables in html page
 for i in range(len(tab)):
     if not len(tab[i]):break
     ht.write('''<table >\n''')
