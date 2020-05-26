@@ -76,7 +76,7 @@ for file in glob.glob("*.txt"):
     if r[0][-6:][:-1] == '.link' :
         link.append(r[1:-1] + r[-1].split())
 img = []
-#get all of the images 
+#get all of the images
 for i in im:
     q = []
     for j in open(i, 'r').readlines():
@@ -92,7 +92,6 @@ print(video)
 print(tab)
 print(inp)
 scription = []
-?
 for i in btn:
     if i[-5][-4:-1] == '.js':
         if(i[-5][:-1] not in scription):
