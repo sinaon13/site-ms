@@ -437,5 +437,5 @@ class page(QMainWindow, QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = page()
     sys.exit(app.exec_())
