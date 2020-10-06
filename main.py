@@ -9,42 +9,6 @@ from PyQt5.QtCore import *
 pg.font.init()
 vec = pg.math.Vector2
 # کلاس اولیه برنامه
-class Example(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-    # تابع مقدار دهی گرافیکی اولیه کلاس
-    def initUI(self):
-        lbl1 = QLabel('Site Maker', self)
-        lbl1.move(200, 50)
-        QToolTip.setFont(QFont('SansSerif', 50))
-        self.resize(440, 250)
-        self.center()
-        self.setWindowTitle('Site Maker')
-        self.setWindowIcon(QIcon('./icons/webb.png'))
-        start = QPushButton('START', self)
-        start.setToolTip('press it to make sites!')
-        start.resize(start.sizeHint())
-        start.move(190, 160)
-        start.clicked.connect(self.s)
-        self.show()
-    # تابع پردازشگر رویداد بسته شدن برنامه
-    def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Sure?', 'Are you sure to quit?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            event.accept()
-            pg.quit()
-            sys.exit()
-        else:
-            event.ignore()
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-    # تابع اجرا کننده صفحه اصلی برنامه
-    def s(self):
-        self.page = page()
 # کلاس راهنمای کاربر
 class Hint(QWidget):
     def __init__(self, path):
