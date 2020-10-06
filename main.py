@@ -8,7 +8,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 pg.font.init()
 vec = pg.math.Vector2
-# کلاس اولیه برنامه
 # کلاس راهنمای کاربر
 class Hint(QWidget):
     def __init__(self, path):
